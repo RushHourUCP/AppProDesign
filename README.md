@@ -1,6 +1,6 @@
-# app_pro_design
+# AppProDesign
 
-A new Flutter project.
+A new Flutter project for Rush Hour Mobility.
 
 ## Getting Started
 
