@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ModeButton extends StatefulWidget {
-  String text;
-  AssetImage icon;
+  final String text;
+  final AssetImage icon;
   ModeButton(this.text, this.icon, {Key key}) : super(key: key);
   @override
   _ModeButtonState createState() => _ModeButtonState();
