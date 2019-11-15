@@ -16,10 +16,12 @@ class _CommandWindowState extends State<CommandWindow> {
 
   @override 
   Widget build(BuildContext context){
-    return Center(
+    return Align(
+      alignment: Alignment.bottomCenter,
       child: Container(
         width: 360.0,
-        margin: EdgeInsets.only(top: 500.0, bottom: 30.0),
+        height: 200.0,
+        margin: EdgeInsets.only(bottom: 30.0),
         decoration: new BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(25.0),
@@ -48,15 +50,15 @@ class _CommandWindowState extends State<CommandWindow> {
 
   Widget _buildModeButton(String text, AssetImage icon){
     return Container(
-      width: 50.0,
-      //height: 62.0,
       margin: EdgeInsets.only(right: 15.0),
+      width: 50.0,
+      height: 62.0,
       color: Colors.blue,
       child: Column(
         children: <Widget>[ 
-          Container(
-            height: 50.0,
-            width: 50.0,
+          Placeholder(
+            fallbackHeight: 50.0,
+            fallbackWidth: 50.0,
             color: Colors.orange,
           ),
           Text(
