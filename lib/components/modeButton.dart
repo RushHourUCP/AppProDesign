@@ -16,15 +16,18 @@ class _ModeButtonState extends State<ModeButton>{
       alignment: Alignment.topCenter,
       child: Container(
         margin: EdgeInsets.only(right: 15.0),
-        width: 50.0,
-        height: 70.0,
-        color: Colors.blue,
+        width: 60.0,
+        height: 80.0,
+        color: Colors.transparent,
         child: Column(
           children: <Widget>[ 
-            Placeholder(
-              fallbackHeight: 50.0,
-              fallbackWidth: 50.0,
-              color: Colors.orange,
+            Container(
+              height: 60.0,
+              width: 60.0,
+              decoration: new BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.black12,
+              ),
             ),
             Text(
               widget.text, 

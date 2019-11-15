@@ -1,3 +1,4 @@
+import 'package:app_pro_design/components/commandButton.dart';
 import 'package:app_pro_design/components/modeButtonList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -13,14 +14,13 @@ class CommandWindow extends StatefulWidget {
 }
 
 class _CommandWindowState extends State<CommandWindow> {
-  final _modeButtonList = <Widget>[];
 
   @override 
   Widget build(BuildContext context){
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
-        width: 360.0,
+        width: 350.0,
         height: 200.0,
         margin: EdgeInsets.only(bottom: 30.0),
         decoration: new BoxDecoration(
@@ -30,14 +30,18 @@ class _CommandWindowState extends State<CommandWindow> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(25.0),
           child: Container(
-            child: Stack(
+            child: Column(
               children: <Widget>[
-                new ModeButtonList(),
+                Flexible(
+                  child: ModeButtonList(),
+                ),
+                Flexible(
+                  child: CommandButton(),
+                ),
               ],
             )
           )
         )
-        //_buildModeButtonList(),
-    ));
+      ));
   }
 }

@@ -14,7 +14,7 @@ class _ModeButtonListState extends State<ModeButtonList>{
   @override
   Widget build(BuildContext buildContext){
     return ListView(
-      padding: EdgeInsets.only(top: 10.0, left: 10),
+      padding: EdgeInsets.only(top: 15.0, left: 15.0),
       children: _getModeButtons(),
       scrollDirection: Axis.horizontal,
     );
