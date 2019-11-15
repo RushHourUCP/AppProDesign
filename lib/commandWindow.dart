@@ -1,3 +1,4 @@
+import 'package:app_pro_design/components/modeButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -48,7 +49,7 @@ class _CommandWindowState extends State<CommandWindow> {
     );
   }
 
-  Widget _buildModeButton(String text, AssetImage icon){
+  /*Widget _buildModeButton(String text, AssetImage icon){
     return Align(
       alignment: Alignment.topCenter,
       child: Container(
@@ -74,12 +75,12 @@ class _CommandWindowState extends State<CommandWindow> {
         )
       ),
     );
-  }
+  }*/
 
   List<Widget> _getModeButtons(){
     List<Widget> buttons = [];
     for(int i=0; i<20; i++){
-      buttons.add(_buildModeButton("mode$i", null));
+      buttons.add(new ModeButton("mode$i", null));
     }
     return buttons;
   }
