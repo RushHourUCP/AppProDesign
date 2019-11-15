@@ -10,6 +10,13 @@ class ModeButton extends StatefulWidget {
 
 class _ModeButtonState extends State<ModeButton>{
 
+  bool activated = false;
+
+  Color _getColor(){
+    if(activated){return Colors.black54;}
+    else{return Colors.black12;}
+  }
+
   @override
   Widget build(BuildContext context){
     return Align(
@@ -26,7 +33,18 @@ class _ModeButtonState extends State<ModeButton>{
               width: 60.0,
               decoration: new BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
-                color: Colors.black12,
+                color: _getColor(),
+              ),
+              child: IconButton(
+                icon: Icon(Icons.monetization_on),
+                onPressed: (){
+                  setState(() {
+                    if (activated){activated = false;}
+                    else{activated = true;}
+                  });
+                },
+                color: Colors.white,
+                iconSize: 35.0,
               ),
             ),
             Text(
