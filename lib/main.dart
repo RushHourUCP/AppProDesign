@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:app_pro_design/commandWindow.dart';
 import 'package:app_pro_design/components/mapWindow.dart';
 import 'package:app_pro_design/components/modeButton.dart';
@@ -9,6 +12,18 @@ import 'components/EventWidget.dart';
 
 void main() => runApp(MyApp());
 
+Future<dynamic> fetchGet() async{
+  var response = await http.get(
+    Uri.encodeFull("http://graph.team08.xp65.renault-digital.com/processed/bike.json"),
+    headers: {"Accept": "application/json"}
+  );
+
+  //print(response.body);
+  final responseJSON = json.decode(response.body);
+
+  return responseJSON;
+}
+
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   final myAppState = _MyAppState();
@@ -17,7 +32,7 @@ class MyApp extends StatefulWidget {
   State<StatefulWidget> createState() {
     // TODO: Subscribe to real events instead
     new Timer.periodic(
-        Duration(seconds: 20), (Timer t) => {myAppState.displayNewEvent()});
+        Duration(seconds: 20), (Timer t) => {myAppState.displayNewEvent(), myAppState.onMissionRequested()});
 
     return myAppState;
   }
@@ -27,6 +42,7 @@ class _MyAppState extends State<MyApp>
     with MissionRequestListener, SelectedModeChangedListener {
   List<Widget> stackedChildren = [MapWindow()];
   final CommandWindow commandWindow = CommandWindow();
+  var path;
 
   @override
   void initState() {
@@ -35,7 +51,41 @@ class _MyAppState extends State<MyApp>
     commandWindow.addMissionRequestListener(this);
     commandWindow.addOnSelectedModeChangedListener(this);
     stackedChildren.add(commandWindow);
+
+    path = null;
   }
+
+  /*
+    Only for modes: "walk", "bike" and "subway"
+  */
+  Future<dynamic> fetchPath(String mode, var xDep, var yDep, var yArr, var xArr) async {
+    var dict = {"departure": { "x":xDep, "y":yDep }, "arrival": { "x":xArr, "y":yArr }};
+    var body = json.encode(dict);
+    String url = "http://graph.team08.xp65.renault-digital.com//road_graph/shortest_path/$mode";
+    Map headers = {
+      'Content-type' : 'application/json',
+      'Accept': 'application/json',
+    };
+
+    var response = await http.post(url, body: body, headers: headers);
+    path = json.decode(response.body);
+  }
+
+  /*
+    Only for mode "car"
+  */
+  /*Future<dynamic> fetchPathForCar(var xDep, var yDep, var yArr, var xArr) async {
+    var dict = {"departure": { "x":xDep, "y":yDep }, "arrival": { "x":xArr, "y":yArr }};
+    var body = json.encode(dict);
+    String url = "http://graph.team08.xp65.renault-digital.com//road_graph/shortest_path/car";
+    Map headers = {
+      'Content-type' : 'application/json',
+      'Accept': 'application/json',
+    };
+
+    var response = await http.post(url, body: body, headers: headers);
+    path = json.decode(response.body);
+  }*/
 
   void onMissionRequested() {
     print("BUTTON PRESSED");
