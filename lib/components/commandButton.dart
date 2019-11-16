@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CommandButton extends StatefulWidget {
   final CommandButtonState _commandButtonState = CommandButtonState();
 
-  void setCallback(VoidCallback callback) {
+  void setOnButtonTaped(VoidCallback callback) {
     _commandButtonState.callback = callback;
   }
 
@@ -11,10 +11,21 @@ class CommandButton extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _commandButtonState;
   }
+
+  void setEnabled(bool boolean) {
+    _commandButtonState.setEnabled(boolean);
+  }
 }
 
 class CommandButtonState extends State<CommandButton> {
   VoidCallback callback;
+  bool _isEnabled = false;
+
+  void setEnabled(bool boolean) {
+    setState(() {
+      _isEnabled = boolean;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +43,16 @@ class CommandButtonState extends State<CommandButton> {
               child: InkWell(
                   onTap: () async {
                     //Function Callback is located in commandWindow.dart
-                    callback();
+                    if (_isEnabled) callback();
                   },
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: new BorderRadius.circular(50.0),
                       gradient: LinearGradient(
-                        colors: [Color(0xFF48c6ef), Color(0xFF6f86d6)],
+                        colors: [
+                          Color(_isEnabled ? 0xFF48c6ef : 0xaaaaaa),
+                          Color(_isEnabled ? 0xFF6f86d6 : 0xaaaaaa)
+                        ],
                       ),
                     ),
                     padding: const EdgeInsets.only(

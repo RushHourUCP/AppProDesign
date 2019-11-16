@@ -28,9 +28,9 @@ class CommandWindow extends StatefulWidget {
 }
 
 class _CommandWindowState extends State<CommandWindow> {
-  List<Widget> children = <Widget>[ModeButtonList()];
-
-  CommandButton commandButton = CommandButton();
+  List<Widget> children = <Widget>[];
+  ModeButtonList modeButtonList = ModeButtonList();
+  CommandButton missionRequestButton = CommandButton();
 
   double height = 200.0;
 
@@ -39,11 +39,20 @@ class _CommandWindowState extends State<CommandWindow> {
     hideMissionRequestButton();
   }
 
+  void enableMissionRequestButton() {
+    // If button displayed on screen
+    if (children.contains(missionRequestButton)) {
+      missionRequestButton.setEnabled(true);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    commandButton.setCallback(hideMissionRequestButton);
-    children.add(commandButton);
+    modeButtonList.setOnOneButtonEnabled(enableMissionRequestButton);
+    children.add(modeButtonList);
+    missionRequestButton.setOnButtonTaped(hideMissionRequestButton);
+    children.add(missionRequestButton);
   }
 
   @override
@@ -65,7 +74,7 @@ class _CommandWindowState extends State<CommandWindow> {
 
   void hideMissionRequestButton() {
     setState(() {
-      children.remove(commandButton);
+      children.remove(missionRequestButton);
       height = 110.0;
     });
   }
