@@ -7,8 +7,12 @@ import 'package:app_pro_design/components/mapWindow.dart';
 import 'package:app_pro_design/components/modeButton.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:http/http.dart' as http;
 import 'package:vibration/vibration.dart';
+=======
+import 'package:mqtt_client/mqtt_client.dart';
+>>>>>>> Connecting to MQTT Broker
 
 import 'components/EventWidget.dart';
 
@@ -34,6 +38,7 @@ class _MyAppState extends State<MyApp>
     with MissionRequestListener, SelectedModeChangedListener {
   List<Widget> stackedChildren = [];
   final CommandWindow commandWindow = CommandWindow();
+  final MqttClient client = MqttClient('mr1dns3dpz5mjj.messaging.solace.cloud', '');
   var path;
   var agentSituation;
 
@@ -48,7 +53,83 @@ class _MyAppState extends State<MyApp>
     stackedChildren.add(commandWindow);
 
     path = null;
+
+    listenMQTT();
   }
+
+  /* 
+    ------------------ Broker Suscription --------------------
+  */
+
+  Future<int> listenMQTT() async{
+    client.onDisconnected = onDisconnected;
+    client.onConnected = onConnected;
+    client.onSubscribed = onSubscribed;
+    client.pongCallback = pong;
+
+    /// try connecting to the broker
+    try {
+      await client.connect("team08", "di34zlpjto");
+    } on Exception catch (e) {
+      print('EXAMPLE::client exception - $e');
+      client.disconnect();
+    }
+
+    /// Check we are connected
+    if (client.connectionStatus.state == MqttConnectionState.connected) {
+      print('EXAMPLE::Mosquitto client connected');
+    } else {
+      /// Use status here rather than state if you also want the broker return code.
+      print(
+          'EXAMPLE::ERROR Mosquitto client connection failed - disconnecting, status is ${client.connectionStatus}');
+      client.disconnect();
+      exit(-1);
+    }
+
+    /// Connecting to topics
+    const String topic = 'team08/prod/user/situation'; // Not a wildcard topic
+    client.subscribe(topic, MqttQos.atMostOnce);
+
+
+    client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      final MqttPublishMessage recMess = c[0].payload;
+      final String pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      print('EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
+      print('');
+    });
+
+  }
+
+  /// The subscribed callback
+  void onSubscribed(String topic) {
+    print('EXAMPLE::Subscription confirmed for topic $topic');
+  }
+
+  /// The unsolicited disconnect callback
+  void onDisconnected() {
+    print('EXAMPLE::OnDisconnected client callback - Client disconnection');
+    if (client.connectionStatus.returnCode == MqttConnectReturnCode.solicited) {
+      print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
+    }
+    exit(-1);
+  }
+
+  /// The successful connect callback
+  void onConnected() {
+    print(
+        'EXAMPLE::OnConnected client callback - Client connection was sucessful');
+  }
+
+  /// Pong callback
+  void pong() {
+    print('EXAMPLE::Ping response client callback invoked');
+  }
+
+
+  /* 
+    ------------------ API Request --------------------
+  */
+
 
   /*
     Update the situation of the agent
@@ -98,6 +179,10 @@ class _MyAppState extends State<MyApp>
     var response = await http.post(url, body: body, headers: headers);
     path = json.decode(response.body);
   }*/
+
+  /* 
+    ------------------  Callbacks --------------------
+  */
 
   void onMissionRequested() {
     print("BUTTON PRESSED");
