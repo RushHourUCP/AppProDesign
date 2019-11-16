@@ -1,4 +1,5 @@
 import 'package:app_pro_design/components/commandButton.dart';
+import 'package:app_pro_design/components/modeButton.dart';
 import 'package:app_pro_design/components/modeButtonList.dart';
 import 'package:app_pro_design/main.dart';
 import 'package:flutter/material.dart';
@@ -14,17 +15,33 @@ class CommandWindow extends StatefulWidget {
   @override
   _CommandWindowState createState() => _CommandWindowState();
 
-  List<MissionRequestListener> _missionRequestListeners = [];
+  final List<MissionRequestListener> _missionRequestListeners = [];
+
+  final List<SelectedModeChangedListener> _selectedModeChangedListeners = [];
 
   void addMissionRequestListener(MissionRequestListener listener) {
     _missionRequestListeners.add(listener);
   }
 
-  notifyMissionRequestListeners() {
+  void notifyMissionRequestListeners() {
     for (MissionRequestListener listener in _missionRequestListeners) {
       listener.onMissionRequested();
     }
   }
+
+  void addOnSelectedModeChangedListener(SelectedModeChangedListener listener) {
+    _selectedModeChangedListeners.add(listener);
+  }
+
+  void notifySelectedModeChangedListeners(ModeButtonModel modeButton) {
+    for (SelectedModeChangedListener listener in _selectedModeChangedListeners) {
+      listener.onSelectedModeChangedListener(modeButton);
+    }
+  }
+}
+
+abstract class SelectedModeChangedListener {
+  void onSelectedModeChangedListener(ModeButtonModel modeButton);
 }
 
 class _CommandWindowState extends State<CommandWindow> {
@@ -39,6 +56,11 @@ class _CommandWindowState extends State<CommandWindow> {
     hideMissionRequestButton();
   }
 
+  void onSelectedButtonChanged(ModeButtonModel modeButton) {
+    enableMissionRequestButton();
+    widget.notifySelectedModeChangedListeners(modeButton);
+  }
+
   void enableMissionRequestButton() {
     // If button displayed on screen
     if (children.contains(missionRequestButton)) {
@@ -49,9 +71,9 @@ class _CommandWindowState extends State<CommandWindow> {
   @override
   void initState() {
     super.initState();
-    modeButtonList.setOnOneButtonEnabled(enableMissionRequestButton);
+    modeButtonList.setOnOneButtonEnabled(onSelectedButtonChanged);
     children.add(modeButtonList);
-    missionRequestButton.setOnButtonTaped(hideMissionRequestButton);
+    missionRequestButton.setOnButtonTaped(onMissionRequestButtonClicked);
     children.add(missionRequestButton);
   }
 
@@ -78,4 +100,5 @@ class _CommandWindowState extends State<CommandWindow> {
       height = 110.0;
     });
   }
+
 }

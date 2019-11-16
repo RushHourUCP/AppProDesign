@@ -30,7 +30,7 @@ class ModeButton extends StatelessWidget {
               ),
             ),
             Text(
-              item.text, 
+                item.label,
               style: TextStyle(
                 fontSize: 14.0, 
                 fontWeight: FontWeight.w300
@@ -49,9 +49,9 @@ class ModeButton extends StatelessWidget {
 }
 
 class ModeButtonModel{
-  final String text;
+  final String label;
   final IconData icon;
   bool isSelected;
 
-  ModeButtonModel(this.text, this.icon, this.isSelected);
+  ModeButtonModel(this.label, this.icon, this.isSelected);
 }

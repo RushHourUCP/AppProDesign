@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 
 class ModeButtonList extends StatefulWidget {
   ModeButtonList({Key key}) : super(key: key);
-  _ModeButtonListState _modeButtonListState = _ModeButtonListState();
+  final _ModeButtonListState _modeButtonListState = _ModeButtonListState();
 
   @override
   _ModeButtonListState createState() => _modeButtonListState;
 
-  void setOnOneButtonEnabled(VoidCallback callback) {
+  void setOnOneButtonEnabled(Function callback) {
     _modeButtonListState.callback = callback;
   }
 }
@@ -23,7 +23,7 @@ class _ModeButtonListState extends State<ModeButtonList> {
     Icons.directions_car
   ];
 
-  VoidCallback callback;
+  Function callback;
 
   @override
   void initState() {
@@ -51,7 +51,7 @@ class _ModeButtonListState extends State<ModeButtonList> {
                     setState(() {
                       buttons.forEach((element) => element.isSelected = false);
                       buttons[index].isSelected = true;
-                      callback();
+                      callback(buttons[index]);
                     });
                   },
                   child: ModeButton(buttons[index]),

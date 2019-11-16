@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_pro_design/commandWindow.dart';
 import 'package:app_pro_design/components/mapWindow.dart';
+import 'package:app_pro_design/components/modeButton.dart';
 import 'package:flutter/material.dart';
 
 import 'components/EventWidget.dart';
@@ -22,7 +23,8 @@ class MyApp extends StatefulWidget {
   }
 }
 
-class _MyAppState extends State<MyApp> with MissionRequestListener {
+class _MyAppState extends State<MyApp>
+    with MissionRequestListener, SelectedModeChangedListener {
   List<Widget> stackedChildren = [MapWindow()];
   final CommandWindow commandWindow = CommandWindow();
 
@@ -31,14 +33,22 @@ class _MyAppState extends State<MyApp> with MissionRequestListener {
     super.initState();
 
     commandWindow.addMissionRequestListener(this);
+    commandWindow.addOnSelectedModeChangedListener(this);
     stackedChildren.add(commandWindow);
   }
 
   void onMissionRequested() {
     print("BUTTON PRESSED");
-    // hideCommandWindow();
+    //TODO
   }
 
+  @override
+  void onSelectedModeChangedListener(ModeButtonModel modeButton) {
+    print(modeButton.label + " was selected");
+    // TODO
+  }
+
+  // NOTE: SHOULD NOT BE USED
   void hideCommandWindow() {
     setState(() {
       stackedChildren.remove(commandWindow);
@@ -79,6 +89,7 @@ class _MyAppState extends State<MyApp> with MissionRequestListener {
       ),
     );
   }
+
 }
 
 abstract class MissionRequestListener {
