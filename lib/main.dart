@@ -1,4 +1,5 @@
 import 'package:app_pro_design/commandWindow.dart';
+import 'package:app_pro_design/components/mapWindow.dart';
 import 'package:flutter/material.dart';
 
 import 'components/EventWidget.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         body: Stack(
           children: <Widget>[
+            MapWindow(),
             CommandWindow(),
             EventWidget("Event type",
                 "Message that gives more information about what happened.")
