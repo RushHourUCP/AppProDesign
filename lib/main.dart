@@ -8,34 +8,41 @@ import 'components/EventWidget.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget with MissionRequestListener {
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   final myAppState = _MyAppState();
 
   @override
   State<StatefulWidget> createState() {
-    CommandWindow commandWindow = CommandWindow();
-    commandWindow.addMissionRequestListener(this);
-    myAppState.stackedChildren.add(commandWindow);
-
     // TODO: Subscribe to real events instead
     new Timer.periodic(
         Duration(seconds: 20), (Timer t) => {myAppState.displayNewEvent()});
 
     return myAppState;
   }
-
-  @override
-  void onMissionRequested() {
-    myAppState.onMissionRequested();
-  }
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with MissionRequestListener {
   List<Widget> stackedChildren = [MapWindow()];
+  final CommandWindow commandWindow = CommandWindow();
+
+  @override
+  void initState() {
+    super.initState();
+
+    commandWindow.addMissionRequestListener(this);
+    stackedChildren.add(commandWindow);
+  }
 
   void onMissionRequested() {
     print("BUTTON PRESSED");
+    // hideCommandWindow();
+  }
+
+  void hideCommandWindow() {
+    setState(() {
+      stackedChildren.remove(commandWindow);
+    });
   }
 
   void displayNewEvent() {

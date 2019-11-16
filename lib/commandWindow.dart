@@ -29,7 +29,7 @@ class CommandWindow extends StatefulWidget {
 
 class _CommandWindowState extends State<CommandWindow> {
   void onMissionRequestButtonClicked() {
-    print("BUTTON PRESSED");
+    widget.notifyMissionRequestListeners();
   }
 
   @override
