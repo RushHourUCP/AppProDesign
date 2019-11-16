@@ -1,22 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ModeButton extends StatefulWidget {
-  final String text;
-  final AssetImage icon;
-  ModeButton(this.text, this.icon, {Key key}) : super(key: key);
-  @override
-  _ModeButtonState createState() => _ModeButtonState();
-}
-
-class _ModeButtonState extends State<ModeButton>{
-
-  bool activated = false;
-
-  Color _getColor(){
-    if(activated){return Colors.black54;}
-    else{return Colors.black12;}
-  }
-
+class ModeButton extends StatelessWidget {
+  final ModeButtonModel item;
+  ModeButton(this.item, {Key key}) : super(key: key);
+  
   @override
   Widget build(BuildContext context){
     return Align(
@@ -35,20 +22,14 @@ class _ModeButtonState extends State<ModeButton>{
                 borderRadius: BorderRadius.circular(10.0),
                 color: _getColor(),
               ),
-              child: IconButton(
-                icon: Icon(Icons.monetization_on),
-                onPressed: (){
-                  setState(() {
-                    if (activated){activated = false;}
-                    else{activated = true;}
-                  });
-                },
+              child: Icon(
+                Icons.monetization_on,
                 color: Colors.white,
-                iconSize: 35.0,
+                size: 35.0,
               ),
             ),
             Text(
-              widget.text, 
+              item.text, 
               style: TextStyle(
                 fontSize: 14.0, 
                 fontWeight: FontWeight.w300
@@ -59,4 +40,17 @@ class _ModeButtonState extends State<ModeButton>{
       ),
     );
   }
+
+  Color _getColor(){
+    if(item.isSelected){return Colors.black54;}
+    else{return Colors.black12;}
+  }
+}
+
+class ModeButtonModel{
+  final String text;
+  final AssetImage icon;
+  bool isSelected;
+
+  ModeButtonModel(this.text, this.icon, this.isSelected);
 }
