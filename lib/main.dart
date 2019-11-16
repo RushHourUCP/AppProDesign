@@ -28,7 +28,8 @@ class _MyAppState extends State<MyApp> {
   void displayNewEvent() {
     print("Displaying new event...");
     EventWidget event = EventWidget(
-        "Event type", "Message that gives information about what happened.");
+        "Event type", DateTime.now(),
+        "Message that gives information about what happened.");
 
     setState(() {
       stackedChildren.add(event);

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 class EventWidget extends StatelessWidget {
   final String id;
+  final DateTime dateTime;
   final String message;
 
-  const EventWidget(this.id, this.message);
+  const EventWidget(this.id, this.dateTime, this.message);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,9 @@ class EventWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(top: 5.0),
                 child: Text(
-                  message,
+                  dateTime.hour.toString()
+                      + ":" + dateTime.minute.toString()
+                      + " - " + message,
                   style: TextStyle(
                     fontSize: 14.0,
                     fontWeight: FontWeight.w300,
