@@ -8,12 +8,15 @@ import 'components/EventWidget.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatefulWidget with MissionRequestListener {
   // This widget is the root of your application.
+  final myAppState = _MyAppState();
 
   @override
   State<StatefulWidget> createState() {
-    final myAppState = _MyAppState();
+    CommandWindow commandWindow = CommandWindow();
+    commandWindow.addMissionRequestListener(this);
+    myAppState.stackedChildren.add(commandWindow);
 
     // TODO: Subscribe to real events instead
     new Timer.periodic(
@@ -21,19 +24,23 @@ class MyApp extends StatefulWidget {
 
     return myAppState;
   }
+
+  @override
+  void onMissionRequested() {
+    myAppState.onMissionRequested();
+  }
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Widget> stackedChildren = [MapWindow(), CommandWindow()];
+  List<Widget> stackedChildren = [MapWindow()];
 
-  void onMissionRequested(){
+  void onMissionRequested() {
     print("BUTTON PRESSED");
   }
 
   void displayNewEvent() {
     print("Displaying new event...");
-    EventWidget event = EventWidget(
-        "Event type", DateTime.now(),
+    EventWidget event = EventWidget("Event type", DateTime.now(),
         "Message that gives information about what happened.");
 
     setState(() {
@@ -65,4 +72,8 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
+}
+
+abstract class MissionRequestListener {
+  void onMissionRequested();
 }
