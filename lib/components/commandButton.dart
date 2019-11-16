@@ -17,7 +17,7 @@ class CommandButton extends StatelessWidget{
             textColor: Colors.white,
             padding: const EdgeInsets.all(0.0),
             child: InkWell(
-              onTap: (){
+              onTap: () async{
                 //Function Callback is located in commandWindow.dart
                 callback();
               },
