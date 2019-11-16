@@ -22,7 +22,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
-
   cached_network_image:
     dependency: transitive
     description:
@@ -159,8 +158,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.6.2"
-<<<<<<< HEAD
-=======
   path_provider:
     dependency: transitive
     description:
@@ -168,7 +165,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.4.2"
->>>>>>> feature/map
   pedantic:
     dependency: transitive
     description:
@@ -176,8 +172,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
-<<<<<<< HEAD
-=======
   platform:
     dependency: transitive
     description:
@@ -192,7 +186,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
->>>>>>> feature/map
   quiver:
     dependency: transitive
     description:
@@ -240,8 +233,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
-<<<<<<< HEAD
-=======
   synchronized:
     dependency: transitive
     description:
@@ -249,7 +240,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0+1"
->>>>>>> feature/map
   term_glyph:
     dependency: transitive
     description:

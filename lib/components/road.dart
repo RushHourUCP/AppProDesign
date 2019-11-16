@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-class Map extends StatelessWidget{
+class Road extends StatelessWidget{
 
-  const Map({Key key}) : super(key: key);
-
-  
+  const Road({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context){
