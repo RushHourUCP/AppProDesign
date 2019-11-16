@@ -28,8 +28,22 @@ class CommandWindow extends StatefulWidget {
 }
 
 class _CommandWindowState extends State<CommandWindow> {
+  List<Widget> children = <Widget>[ModeButtonList()];
+
+  CommandButton commandButton = CommandButton();
+
+  double height = 200.0;
+
   void onMissionRequestButtonClicked() {
     widget.notifyMissionRequestListeners();
+    //hideMissionRequestButton();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    commandButton.setCallback(hideMissionRequestButton);
+    children.add(commandButton);
   }
 
   @override
@@ -38,24 +52,21 @@ class _CommandWindowState extends State<CommandWindow> {
         alignment: Alignment.bottomCenter,
         child: Container(
             width: 350.0,
-            height: 200.0,
+            height: height,
             margin: EdgeInsets.only(bottom: 30.0),
             decoration: new BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(25.0),
             ),
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(25.0),
-                child: Container(
-                    child: Column(
-                      children: <Widget>[
-                        Flexible(
-                          child: ModeButtonList(),
-                        ),
-                        Flexible(
-                          child: CommandButton(onMissionRequestButtonClicked),
-                        ),
-                      ],
-                    )))));
+            child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Column(children: children))));
+  }
+
+  void hideMissionRequestButton() {
+    setState(() {
+      children.remove(commandButton);
+      height = 110.0;
+    });
   }
 }
