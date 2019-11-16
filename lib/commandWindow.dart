@@ -36,7 +36,7 @@ class _CommandWindowState extends State<CommandWindow> {
 
   void onMissionRequestButtonClicked() {
     widget.notifyMissionRequestListeners();
-    //hideMissionRequestButton();
+    hideMissionRequestButton();
   }
 
   @override
