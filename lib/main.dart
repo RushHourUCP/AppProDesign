@@ -12,6 +12,7 @@ import 'components/EventWidget.dart';
 
 void main() => runApp(MyApp());
 
+
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   final myAppState = _MyAppState();
