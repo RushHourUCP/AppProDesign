@@ -18,12 +18,13 @@ class ModeButton extends StatelessWidget {
             Container(
               height: 60.0,
               width: 60.0,
+              margin: EdgeInsets.only(bottom: 3.0),
               decoration: new BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
                 color: _getColor(),
               ),
               child: Icon(
-                Icons.monetization_on,
+                item.icon,
                 color: Colors.white,
                 size: 35.0,
               ),
@@ -49,7 +50,7 @@ class ModeButton extends StatelessWidget {
 
 class ModeButtonModel{
   final String text;
-  final AssetImage icon;
+  final IconData icon;
   bool isSelected;
 
   ModeButtonModel(this.text, this.icon, this.isSelected);
