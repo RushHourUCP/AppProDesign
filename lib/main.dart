@@ -14,7 +14,8 @@ class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     final myAppState = _MyAppState();
-    
+
+    // TODO: Subscribe to real events instead
     new Timer.periodic(
         Duration(seconds: 20), (Timer t) => {myAppState.displayNewEvent()});
 
