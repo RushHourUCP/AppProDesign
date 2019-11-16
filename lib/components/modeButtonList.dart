@@ -11,12 +11,13 @@ class ModeButtonList extends StatefulWidget{
 class _ModeButtonListState extends State<ModeButtonList>{
 
   List<ModeButtonModel> buttons = new List<ModeButtonModel>();
+  List<String> transports = ["Walk", "Bike", "Subway", "Car"];
 
   @override
   void initState(){
     super.initState();
     for(int i=0; i<4; i++){
-      buttons.add(new ModeButtonModel("mode$i", null, false));
+      buttons.add(new ModeButtonModel(transports[i], null, false));
     }
   }
   

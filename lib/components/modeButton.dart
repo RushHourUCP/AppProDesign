@@ -18,6 +18,7 @@ class ModeButton extends StatelessWidget {
             Container(
               height: 60.0,
               width: 60.0,
+              margin: EdgeInsets.only(bottom: 3.0),
               decoration: new BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
                 color: _getColor(),

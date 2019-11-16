@@ -7,6 +7,7 @@ class CommandButton extends StatelessWidget{
   @override
   Widget build(BuildContext buildContext){
     return Container(
+      margin: EdgeInsets.only(bottom: 10.00),
       child: Center(
         child: ClipRRect(
           borderRadius: BorderRadius.circular(50.0),
