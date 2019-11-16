@@ -43,6 +43,7 @@ class _MyAppState extends State<MyApp>
   List<Widget> stackedChildren = [MapWindow()];
   final CommandWindow commandWindow = CommandWindow();
   var path;
+  var agentSituation;
 
   @override
   void initState() {
@@ -53,6 +54,18 @@ class _MyAppState extends State<MyApp>
     stackedChildren.add(commandWindow);
 
     path = null;
+  }
+
+  /*
+    Update the situation of the agent
+  */
+  Future<dynamic> fetchAgentSituation() async {
+    var response = await http.get(
+      Uri.encodeFull("agent-controller.team08.xp65.renault-digital.com/api/user/situation/last"),
+      headers: {"Accept": "application/json"}
+    );
+    agentSituation = json.decode(response.body);
+    return agentSituation;
   }
 
   /*
