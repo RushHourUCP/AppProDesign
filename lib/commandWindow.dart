@@ -36,7 +36,7 @@ class _CommandWindowState extends State<CommandWindow> {
                   child: ModeButtonList(),
                 ),
                 Flexible(
-                  child: CommandButton(),
+                  child: CommandButton(null),
                 ),
               ],
             )
