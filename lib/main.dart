@@ -12,18 +12,6 @@ import 'components/EventWidget.dart';
 
 void main() => runApp(MyApp());
 
-Future<dynamic> fetchGet() async{
-  var response = await http.get(
-    Uri.encodeFull("http://graph.team08.xp65.renault-digital.com/processed/bike.json"),
-    headers: {"Accept": "application/json"}
-  );
-
-  //print(response.body);
-  final responseJSON = json.decode(response.body);
-
-  return responseJSON;
-}
-
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   final myAppState = _MyAppState();
