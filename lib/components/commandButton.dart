@@ -4,8 +4,6 @@ class CommandButton extends StatelessWidget{
 
   final VoidCallback callback;
   CommandButton(this.callback, {Key key}) : super(key: key);
-  static const List<Color> onPressedColor = [Color(0xFF6f86d6), Color(0xFF48c6ef)];
-  static const List<Color> normalColor = [Color(0xFF48c6ef), Color(0xFF6f86d6)];
 
   @override
   Widget build(BuildContext buildContext){
@@ -20,14 +18,14 @@ class CommandButton extends StatelessWidget{
             padding: const EdgeInsets.all(0.0),
             child: InkWell(
               onTap: (){
-                //Write the callback function here
-                print("REQUEST MISSION BUTTON PRESSED");
+                //Function Callback is located in commandWindow.dart
+                callback();
               },
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: new BorderRadius.circular(50.0),
                   gradient: LinearGradient(
-                    colors: normalColor,
+                    colors: [Color(0xFF48c6ef), Color(0xFF6f86d6)],
                   ),
                 ),
                 padding: const EdgeInsets.only(left: 55.0, right: 55.0, top: 20.0, bottom: 20.0),

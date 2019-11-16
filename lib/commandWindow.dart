@@ -9,11 +9,16 @@ import 'package:flutter/widgets.dart';
 
 class CommandWindow extends StatefulWidget {
   CommandWindow({Key key}) : super(key: key);
+
   @override
   _CommandWindowState createState() => _CommandWindowState();
 }
 
 class _CommandWindowState extends State<CommandWindow> {
+
+  void callback(){
+    print("BUTTON PRESSED");
+  }
 
   @override 
   Widget build(BuildContext context){
@@ -36,7 +41,7 @@ class _CommandWindowState extends State<CommandWindow> {
                   child: ModeButtonList(),
                 ),
                 Flexible(
-                  child: CommandButton(null),
+                  child: CommandButton(callback),
                 ),
               ],
             )
