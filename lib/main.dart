@@ -136,7 +136,16 @@ class _MyAppState extends State<MyApp>
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Stack(
+<<<<<<< HEAD
           children: stackedChildren,
+=======
+          children: <Widget>[
+            MapWindow([Offset(0, 0), Offset(3,0), Offset(3, 11), Offset(0, 11)]),
+            CommandWindow(),
+            EventWidget("Event type",
+                "Message that gives more information about what happened.")
+          ],
+>>>>>>> feature/map
         ),
       ),
     );
