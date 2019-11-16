@@ -1,4 +1,5 @@
 import 'package:app_pro_design/commandWindow.dart';
+import 'package:app_pro_design/components/mapWindow.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Stack(children: <Widget>[
-          CommandWindow()
+          MapWindow(),          
+          CommandWindow(),
         ],),
       ),
     );
