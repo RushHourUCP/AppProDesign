@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'request.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -6,6 +9,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -43,6 +47,17 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+// class GraphService{
+//   static Future<String> getGraph() async {
+//     final response = await http.get("http://graph.team08.xp65.renault-digital.com/processed/bike.json");
+//     if(response.statusCode == 200) {
+//       return json.decode(response.body);
+//     } else {
+//       return null;
+//     }
+//   }
+// }
+
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
@@ -54,6 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      final data = GraphService.getGraph();
+      print(data);
     });
   }
 
