@@ -1,6 +1,8 @@
 import 'package:app_pro_design/commandWindow.dart';
 import 'package:flutter/material.dart';
 
+import 'components/EventWidget.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -16,9 +18,13 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Stack(children: <Widget>[
-          CommandWindow()
-        ],),
+        body: Stack(
+          children: <Widget>[
+            CommandWindow(),
+            EventWidget("Event type",
+                "Message that gives more information about what happened.")
+          ],
+        ),
       ),
     );
   }
@@ -26,11 +32,10 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
-
-
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
@@ -80,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-       // This trailing comma makes auto-formatting nicer for build methods.
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
