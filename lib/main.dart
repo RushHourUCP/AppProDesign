@@ -95,8 +95,8 @@ class _MyAppState extends State<MyApp>
     const String weatherTopic = 'team08/prod/context/change/weather';
     const String airTopic = 'team08/prod/context/change/air';
     const String roadStatusTopic = 'team08/prod/environment/change/roads_status';
-    const String lineStateTopic = 'team08/prod/environment/change/lines_state​';
-    const String trafficConditionTopic = 'team08/prod/environment/change/traffic_conditions​';
+    const String linesChangeTopic = 'team08/prod/environement/change/lines_change';
+    const String trafficConditionTopic = 'team08/prod/environement/change/traffic_conditions';
     const String breakdownTopic = 'team08/prod/environment/change/breakdown';
     client.subscribe(situationTopic, MqttQos.atMostOnce);
     client.subscribe(statusTopic, MqttQos.atMostOnce);
@@ -105,8 +105,8 @@ class _MyAppState extends State<MyApp>
     client.subscribe(weatherTopic, MqttQos.atMostOnce);
     client.subscribe(airTopic, MqttQos.atMostOnce);
     client.subscribe(roadStatusTopic, MqttQos.atMostOnce);
-    //client.subscribe(lineStateTopic, MqttQos.atMostOnce);
-    //client.subscribe(trafficConditionTopic, MqttQos.atMostOnce);
+    client.subscribe(linesChangeTopic, MqttQos.atMostOnce);
+    client.subscribe(trafficConditionTopic, MqttQos.atMostOnce);
     client.subscribe(breakdownTopic, MqttQos.atMostOnce);
 
 
