@@ -233,13 +233,44 @@ class MyAppState extends State<MyApp>
 
       case weatherTopic:
         {
-          //TODO
+          String meteoCondition = decodedMessage["condition"];
+          var notificationType;
+          switch(meteoCondition){
+            case "snow":
+              notificationType = NotificationType.STRONG_WARNING;
+              break;
+            case "rain":
+              notificationType = NotificationType.LOW_WARNING;
+              break;
+            case "normal":
+              notificationType = NotificationType.GOOD_NEWS;
+              break;
+            case "heat wave":
+              notificationType = NotificationType.STRONG_WARNING;
+              break;
+          }
+          NotificationModel notification = new NotificationModel(
+              "Weather News.",
+              DateTime.now(),
+              "The weather is now: $meteoCondition",
+              notificationType,
+              5);
+          displayNotification(notification);
         }
         break;
 
       case airTopic:
         {
-          //TODO
+          String airCondition = decodedMessage["condition"];
+          var notificationType;
+          (airCondition == "normal") ? notificationType = NotificationType.GOOD_NEWS : notificationType = NotificationType.LOW_WARNING;
+          NotificationModel notification = new NotificationModel(
+              "Air Pollution News.",
+              DateTime.now(),
+              "The air is now: $airCondition",
+              notificationType,
+              5);
+          displayNotification(notification);
         }
         break;
 
