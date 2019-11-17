@@ -141,8 +141,9 @@ class _MyAppState extends State<MyApp>
           3);
     }
 
+    int duration = (importance == EventImportance.HIGH) ? 20 : 10;
     new Future.delayed(
-        const Duration(seconds: 10),
+        Duration(seconds: duration),
             () =>
             setState(() {
               stackedChildren.remove(eventWidget);

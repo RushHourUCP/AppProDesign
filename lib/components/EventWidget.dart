@@ -15,7 +15,8 @@ class EventWidget extends StatelessWidget {
             margin: EdgeInsets.only(top: 60.0),
             padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
             decoration: new BoxDecoration(
-              color: Colors.amber,
+              color: (eventModel.importance == EventImportance.HIGH) ? Colors
+                  .amber : Color.fromARGB(255, 255, 255, 153),
               borderRadius: BorderRadius.circular(25.0),
             ),
             child: Column(children: <Widget>[
