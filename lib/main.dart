@@ -27,14 +27,14 @@ class MyApp extends StatefulWidget {
     new Timer.periodic(
         Duration(seconds: 20),
             (Timer t) =>
-        {myAppState.displayNewEvent(), myAppState.onMissionRequested()});
+        {myAppState.displayNewEvent()});
 
     return myAppState;
   }
 }
 
 class _MyAppState extends State<MyApp>
-    with MissionRequestListener, SelectedModeChangedListener {
+    with MissionStartListener, SelectedModeChangedListener {
   List<Widget> stackedChildren = [];
   final CommandWindow commandWindow = CommandWindow();
   final MqttClient client =
@@ -81,7 +81,9 @@ class _MyAppState extends State<MyApp>
   */
 
   void agentGoTo(String vehicle, double x, double y) async{
-      client.onConnected = onConnected;
+    final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
+
+    client.onConnected = onConnected;
     var message = {};
     var target = {};
     var jsonString;
@@ -99,7 +101,10 @@ class _MyAppState extends State<MyApp>
     message['target'] = target;
 
     jsonString = json.encode(message);
-    client.publishMessage("team08/prod/user/path", MqttQos.exactlyOnce, jsonString.payload);
+
+    builder.addString(jsonString);
+    client.publishMessage(
+        "team08/prod/user/path", MqttQos.exactlyOnce, builder.payload);
 
     client.disconnect();
   }
@@ -254,7 +259,6 @@ class _MyAppState extends State<MyApp>
     if (client.connectionStatus.returnCode == MqttConnectReturnCode.solicited) {
       print('OnDisconnected callback is solicited, this is correct');
     }
-    exit(-1);
   }
 
   /// The successful connect callback
@@ -324,9 +328,8 @@ class _MyAppState extends State<MyApp>
     ------------------  Callbacks --------------------
   */
 
-  void onMissionRequested() {
-    print("BUTTON PRESSED");
-    //TODO
+  void onMissionStarted() {
+    goToNextMissionPosition();
   }
 
   @override
@@ -419,11 +422,15 @@ class _MyAppState extends State<MyApp>
 
   void setMissionPositions(List<Position> positions) {
     _missionPositions = positions;
-    // TODO pathFinding
     // TODO update map UI
+  }
+
+  void goToNextMissionPosition() {
+    var nextPosition = _missionPositions[0];
+    agentGoTo(commandWindow.getSelectedMode(), nextPosition.x, nextPosition.y);
   }
 }
 
-abstract class MissionRequestListener {
-  void onMissionRequested();
+abstract class MissionStartListener {
+  void onMissionStarted();
 }

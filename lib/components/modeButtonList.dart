@@ -11,11 +11,18 @@ class ModeButtonList extends StatefulWidget {
   void setOnOneButtonEnabled(Function callback) {
     _modeButtonListState.callback = callback;
   }
+
+  String getSelectedMode() {
+    for (ModeButtonModel button in _modeButtonListState.buttons) {
+      if (button.isSelected) return button.label;
+    }
+    return "";
+  }
 }
 
 class _ModeButtonListState extends State<ModeButtonList> {
   List<ModeButtonModel> buttons = new List<ModeButtonModel>();
-  List<String> transports = ["Walk", "Bike", "Subway", "Car"];
+  List<String> transports = ["walk", "bike", "subway", "car"];
   List<IconData> icons = [
     Icons.directions_walk,
     Icons.directions_bike,

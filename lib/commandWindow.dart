@@ -12,24 +12,28 @@ import 'package:flutter/widgets.dart';
 class CommandWindow extends StatefulWidget {
   CommandWindow({Key key}) : super(key: key);
 
-  final _CommandWindowState commandWindowState = _CommandWindowState();
+  final _CommandWindowState _commandWindowState = _CommandWindowState();
 
   @override
   _CommandWindowState createState() {
-    return commandWindowState;
+    return _commandWindowState;
   }
 
-  final List<MissionRequestListener> _missionRequestListeners = [];
+  final List<MissionStartListener> _missionRequestListeners = [];
 
   final List<SelectedModeChangedListener> _selectedModeChangedListeners = [];
 
-  void addMissionRequestListener(MissionRequestListener listener) {
+  String getSelectedMode() {
+    return _commandWindowState.modeButtonList.getSelectedMode();
+  }
+
+  void addMissionRequestListener(MissionStartListener listener) {
     _missionRequestListeners.add(listener);
   }
 
   void _notifyMissionRequestListeners() {
-    for (MissionRequestListener listener in _missionRequestListeners) {
-      listener.onMissionRequested();
+    for (MissionStartListener listener in _missionRequestListeners) {
+      listener.onMissionStarted();
     }
   }
 
@@ -45,7 +49,7 @@ class CommandWindow extends StatefulWidget {
   }
 
   void enableMissionLaunchButton(bool boolean) {
-    commandWindowState.missionStartButton.setEnabled(boolean);
+    _commandWindowState.missionStartButton.setEnabled(boolean);
   }
 }
 
