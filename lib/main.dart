@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:vibration/vibration.dart';
 
-import 'components/EventWidget.dart';
+import 'components/NotificationWidget.dart';
 import 'models/Position.dart';
 
 void main() => runApp(MyApp());
@@ -27,7 +27,7 @@ class MyApp extends StatefulWidget {
     new Timer.periodic(
         Duration(seconds: 20),
             (Timer t) =>
-        {myAppState.displayNewEvent()});
+        {myAppState.displayNewNotification()});
 
     return myAppState;
   }
@@ -345,36 +345,39 @@ class _MyAppState extends State<MyApp>
     });
   }
 
-  void displayNewEvent() {
-    print("Displaying new event...");
+  void displayNewNotification() {
+    print("Displaying new notification...");
 
     //TODO: replace by real importance priorization
-    EventImportance importance =
-    Random().nextInt(10) == 0 ? EventImportance.HIGH : EventImportance.LOW;
+    NotificationImportance importance =
+    Random().nextInt(10) == 0
+        ? NotificationImportance.HIGH
+        : NotificationImportance.LOW;
 
-    EventModel event = EventModel("Event type", DateTime.now(),
+    NotificationModel notification = NotificationModel(
+        "Notification type", DateTime.now(),
         "Message that gives information about what happened.", importance);
 
-    EventWidget eventWidget = EventWidget(event);
+    NotificationWidget notificationWidget = NotificationWidget(notification);
 
     setState(() {
-      stackedChildren.add(eventWidget);
+      stackedChildren.add(notificationWidget);
     });
 
-    // Vibrate if the event is important
-    if (importance == EventImportance.HIGH) {
+    // Vibrate if the notification is important
+    if (importance == NotificationImportance.HIGH) {
       vibratePhone();
       playSound(
           "https://notificationsounds.com/wake-up-tones/system-fault-518/download/mp3",
           3);
     }
 
-    int duration = (importance == EventImportance.HIGH) ? 20 : 10;
+    int duration = (importance == NotificationImportance.HIGH) ? 20 : 10;
     new Future.delayed(
         Duration(seconds: duration),
             () =>
             setState(() {
-              stackedChildren.remove(eventWidget);
+              stackedChildren.remove(notificationWidget);
             }));
   }
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class EventWidget extends StatelessWidget {
-  final EventModel eventModel;
+class NotificationWidget extends StatelessWidget {
+  final NotificationModel notificationModel;
 
-  const EventWidget(this.eventModel);
+  const NotificationWidget(this.notificationModel);
 
   @override
   Widget build(BuildContext context) {
@@ -15,22 +15,23 @@ class EventWidget extends StatelessWidget {
             margin: EdgeInsets.only(top: 60.0),
             padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
             decoration: new BoxDecoration(
-              color: (eventModel.importance == EventImportance.HIGH) ?
+              color: (notificationModel.importance ==
+                  NotificationImportance.HIGH) ?
               Colors.deepOrangeAccent :
               Colors.amberAccent,
               borderRadius: BorderRadius.circular(25.0),
             ),
             child: Column(children: <Widget>[
               Text(
-                eventModel.id,
+                notificationModel.id,
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w700),
               ),
               Container(
                 padding: EdgeInsets.only(top: 5.0),
                 child: Text(
-                  eventModel.dateTime.hour.toString()
-                      + ":" + eventModel.dateTime.minute.toString()
-                      + " - " + eventModel.message,
+                  notificationModel.dateTime.hour.toString()
+                      + ":" + notificationModel.dateTime.minute.toString()
+                      + " - " + notificationModel.message,
                   style: TextStyle(
                     fontSize: 14.0,
                     fontWeight: FontWeight.w300,
@@ -41,16 +42,16 @@ class EventWidget extends StatelessWidget {
   }
 }
 
-class EventModel {
+class NotificationModel {
   final String id;
   final DateTime dateTime;
   final String message;
-  final EventImportance importance;
+  final NotificationImportance importance;
 
-  EventModel(this.id, this.dateTime, this.message, this.importance);
+  NotificationModel(this.id, this.dateTime, this.message, this.importance);
 }
 
-enum EventImportance {
+enum NotificationImportance {
   HIGH,
   LOW
 }
