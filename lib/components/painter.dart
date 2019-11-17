@@ -4,9 +4,9 @@ class MyPainter extends CustomPainter{
   List<Offset> points = new List();
 
   
-  MyPainter(List<Offset> newPoints, double dx, double dy){
-
-    newPoints.forEach((point) => points.add(Offset(dx/6*point.dx, dy/22*point.dy)));
+  MyPainter(List<Offset> newPoints, double width, double height){
+  
+    newPoints.forEach((point) => points.add(Offset(width/6*point.dx, height/22*point.dy)));
     //newPoints.forEach((point) => this.points.add(Offset(dx/2, dy/2)));
     //this.points = newPoints;
   }
@@ -33,7 +33,6 @@ class MyPainter extends CustomPainter{
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    
-    return null;
+    return points.isEmpty;
   }
 }

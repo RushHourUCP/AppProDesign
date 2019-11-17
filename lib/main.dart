@@ -18,8 +18,7 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
-  final myAppState = _MyAppState();
-
+  final myAppState = MyAppState();
   @override
   State<StatefulWidget> createState() {
     // TODO: Subscribe to real events instead
@@ -32,13 +31,16 @@ class MyApp extends StatefulWidget {
   }
 }
 
-class _MyAppState extends State<MyApp>
+class MyAppState extends State<MyApp>
     with MissionRequestListener, SelectedModeChangedListener {
   List<Widget> stackedChildren = [];
   final CommandWindow commandWindow = CommandWindow();
   final MqttClient client = MqttClient('mr1dns3dpz5mjj.messaging.solace.cloud', '');
   var path;
   var agentSituation;
+  Offset _agentPos = Offset(0,0);
+
+  Offset get agentPos => _agentPos;
 
   static const String situationTopic = 'team08/prod/user/situation';
   static const String statusTopic = 'team08/prod/user/status';
@@ -55,7 +57,7 @@ class _MyAppState extends State<MyApp>
   void initState() {
     super.initState();
 
-    stackedChildren.add(MapWindow([Offset(0, 0), Offset(3,0), Offset(3, 11), Offset(0, 11)]));
+    stackedChildren.add(MapWindow());
 
     commandWindow.addMissionRequestListener(this);
     commandWindow.addOnSelectedModeChangedListener(this);
@@ -121,17 +123,25 @@ class _MyAppState extends State<MyApp>
     final MqttPublishMessage recMess = message.payload;
     final String pt = MqttPublishPayload.bytesToStringAsString(
         recMess.payload.message);
+    print("Got a ${message.topic} message");
     print('JSON Payload: ${json.decode(pt)}');
     switch (message.topic) {
       case situationTopic :
         {
-          //TODO
+          print("Got a status topic message");
+          Map<String,dynamic> payload = json.decode(pt);
+          String vehicle = payload["vehicle_type"];
+          setState() {
+            _agentPos = Offset(payload["position"]["x"].toDouble(),
+            payload["position"]["y"].toDouble());
+          }
+
         }
         break;
 
       case statusTopic :
         {
-          //TODO
+          
         }
         break;
 
