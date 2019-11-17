@@ -164,10 +164,14 @@ class MyAppState extends State<MyApp>
 
   void handleMessage(MqttReceivedMessage<MqttMessage> message) {
     final MqttPublishMessage recMess = message.payload;
-    final String pt = MqttPublishPayload.bytesToStringAsString(
-        recMess.payload.message);
-    print("Got a ${message.topic} message");
-    print('JSON Payload: ${json.decode(pt)}');
+
+    final String pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+
+    var decodedMessage = json.decode(pt);
+    print('New MQTT Message');
+    print('---- Message topic: ${message.topic}');
+    print('---- JSON Payload: $decodedMessage');
+
     switch (message.topic) {
       case situationTopic:
         {
