@@ -9,8 +9,8 @@ import 'package:app_pro_design/components/modeButton.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:vibration/vibration.dart';
 import 'package:mqtt_client/mqtt_client.dart';
+import 'package:vibration/vibration.dart';
 
 import 'components/EventWidget.dart';
 
@@ -39,6 +39,17 @@ class _MyAppState extends State<MyApp>
   final MqttClient client = MqttClient('mr1dns3dpz5mjj.messaging.solace.cloud', '');
   var path;
   var agentSituation;
+
+  static const String situationTopic = 'team08/prod/user/situation';
+  static const String statusTopic = 'team08/prod/user/status';
+  static const String missionTopic = 'team08/prod/user/mission';
+  static const String objectiveReachedTopic = 'team08/prod/user/objective-reached';
+  static const String weatherTopic = 'team08/prod/context/change/weather';
+  static const String airTopic = 'team08/prod/context/change/air';
+  static const String roadStatusTopic = 'team08/prod/environment/change/roads_status';
+  static const String linesChangeTopic = 'team08/prod/environement/change/lines_change';
+  static const String trafficConditionTopic = 'team08/prod/environement/change/traffic_conditions';
+  static const String breakdownTopic = 'team08/prod/environment/change/breakdown';
 
   @override
   void initState() {
@@ -88,16 +99,6 @@ class _MyAppState extends State<MyApp>
     }
 
     /// Connecting to topics
-    const String situationTopic = 'team08/prod/user/situation';
-    const String statusTopic = 'team08/prod/user/status';
-    const String missionTopic = 'team08/prod/user/mission';
-    const String objectiveReachedTopic = 'team08/prod/user/objective-reached';
-    const String weatherTopic = 'team08/prod/context/change/weather';
-    const String airTopic = 'team08/prod/context/change/air';
-    const String roadStatusTopic = 'team08/prod/environment/change/roads_status';
-    const String linesChangeTopic = 'team08/prod/environement/change/lines_change';
-    const String trafficConditionTopic = 'team08/prod/environement/change/traffic_conditions';
-    const String breakdownTopic = 'team08/prod/environment/change/breakdown';
     client.subscribe(situationTopic, MqttQos.atMostOnce);
     client.subscribe(statusTopic, MqttQos.atMostOnce);
     client.subscribe(missionTopic, MqttQos.atMostOnce);
@@ -109,14 +110,85 @@ class _MyAppState extends State<MyApp>
     client.subscribe(trafficConditionTopic, MqttQos.atMostOnce);
     client.subscribe(breakdownTopic, MqttQos.atMostOnce);
 
-
-    client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-      final MqttPublishMessage recMess = c[0].payload;
-      final String pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      print('JSON Payload: ${json.decode(pt)}');
-      // TODO: Handle event
+    client.updates.listen((List<MqttReceivedMessage<MqttMessage>> messages) {
+      for (MqttReceivedMessage<MqttMessage> message in messages) {
+        handleMessage(message);
+      }
     });
+  }
 
+  void handleMessage(MqttReceivedMessage<MqttMessage> message) {
+    final MqttPublishMessage recMess = message.payload;
+    final String pt = MqttPublishPayload.bytesToStringAsString(
+        recMess.payload.message);
+    print('JSON Payload: ${json.decode(pt)}');
+    switch (message.topic) {
+      case situationTopic :
+        {
+          //TODO
+        }
+        break;
+
+      case statusTopic :
+        {
+          //TODO
+        }
+        break;
+
+      case missionTopic :
+        {
+          //TODO
+        }
+        break;
+
+      case objectiveReachedTopic :
+        {
+          //TODO
+        }
+        break;
+
+      case weatherTopic :
+        {
+          //TODO
+        }
+        break;
+
+      case airTopic :
+        {
+          //TODO
+        }
+        break;
+
+      case roadStatusTopic :
+        {
+          //TODO
+        }
+        break;
+
+      case linesChangeTopic :
+        {
+          //TODO
+        }
+        break;
+
+      case trafficConditionTopic :
+        {
+          //TODO
+        }
+        break;
+
+      case breakdownTopic :
+        {
+          //TODO
+        }
+        break;
+
+      default :
+        {
+          print("Unhandled message type");
+        }
+        break;
+    }
   }
 
   void onSubscribeFail(String topic){
