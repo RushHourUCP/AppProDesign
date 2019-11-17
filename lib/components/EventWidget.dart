@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 class EventWidget extends StatelessWidget {
-  final String id;
-  final DateTime dateTime;
-  final String message;
+  final EventModel eventModel;
 
-  const EventWidget(this.id, this.dateTime, this.message);
+  const EventWidget(this.eventModel);
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +20,15 @@ class EventWidget extends StatelessWidget {
             ),
             child: Column(children: <Widget>[
               Text(
-                id,
+                eventModel.id,
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w700),
               ),
               Container(
                 padding: EdgeInsets.only(top: 5.0),
                 child: Text(
-                  dateTime.hour.toString()
-                      + ":" + dateTime.minute.toString()
-                      + " - " + message,
+                  eventModel.dateTime.hour.toString()
+                      + ":" + eventModel.dateTime.minute.toString()
+                      + " - " + eventModel.message,
                   style: TextStyle(
                     fontSize: 14.0,
                     fontWeight: FontWeight.w300,
@@ -39,4 +37,18 @@ class EventWidget extends StatelessWidget {
               ),
             ])));
   }
+}
+
+class EventModel {
+  final String id;
+  final DateTime dateTime;
+  final String message;
+  final EventImportance importance;
+
+  EventModel(this.id, this.dateTime, this.message, this.importance);
+}
+
+enum EventImportance {
+  HIGH,
+  LOW
 }
