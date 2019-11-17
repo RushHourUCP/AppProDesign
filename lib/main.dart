@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:app_pro_design/commandWindow.dart';
@@ -9,6 +10,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:vibration/vibration.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 
 import 'components/EventWidget.dart';
 
@@ -34,6 +36,7 @@ class _MyAppState extends State<MyApp>
     with MissionRequestListener, SelectedModeChangedListener {
   List<Widget> stackedChildren = [];
   final CommandWindow commandWindow = CommandWindow();
+  final MqttClient client = MqttClient('mr1dns3dpz5mjj.messaging.solace.cloud', '');
   var path;
   var agentSituation;
 
@@ -48,7 +51,107 @@ class _MyAppState extends State<MyApp>
     stackedChildren.add(commandWindow);
 
     path = null;
+
+    listenMQTT();
   }
+
+  /* 
+    ------------------ Broker Suscription --------------------
+  */
+
+  Future<int> listenMQTT() async{
+    client.onDisconnected = onDisconnected;
+    client.onConnected = onConnected;
+    client.onSubscribed = onSubscribed;
+    client.pongCallback = pong;
+    client.onSubscribeFail = onSubscribeFail;
+
+    /// try connecting to the broker
+    try {
+      await client.connect("team08", "di34zlpjto");
+      //client.setProtocolV311();
+      //client.logging(on: true);
+    } on Exception catch (e) {
+      print('client exception - $e');
+      client.disconnect();
+    }
+
+    /// Check we are connected
+    if (client.connectionStatus.state == MqttConnectionState.connected) {
+      print('Mosquitto client connected');
+    } else {
+      /// Use status here rather than state if you also want the broker return code.
+      print(
+          'ERROR Mosquitto client connection failed - disconnecting, status is ${client.connectionStatus}');
+      client.disconnect();
+      exit(-1);
+    }
+
+    /// Connecting to topics
+    const String situationTopic = 'team08/prod/user/situation';
+    const String statusTopic = 'team08/prod/user/status';
+    const String missionTopic = 'team08/prod/user/mission';
+    const String objectiveReachedTopic = 'team08/prod/user/objective-reached';
+    const String weatherTopic = 'team08/prod/context/change/weather';
+    const String airTopic = 'team08/prod/context/change/air';
+    const String roadStatusTopic = 'team08/prod/environment/change/roads_status';
+    const String lineStateTopic = 'team08/prod/environment/change/lines_state​';
+    const String trafficConditionTopic = 'team08/prod/environment/change/traffic_conditions​';
+    const String breakdownTopic = 'team08/prod/environment/change/breakdown';
+    client.subscribe(situationTopic, MqttQos.atMostOnce);
+    client.subscribe(statusTopic, MqttQos.atMostOnce);
+    client.subscribe(missionTopic, MqttQos.atMostOnce);
+    client.subscribe(objectiveReachedTopic, MqttQos.atMostOnce);
+    client.subscribe(weatherTopic, MqttQos.atMostOnce);
+    client.subscribe(airTopic, MqttQos.atMostOnce);
+    client.subscribe(roadStatusTopic, MqttQos.atMostOnce);
+    //client.subscribe(lineStateTopic, MqttQos.atMostOnce);
+    //client.subscribe(trafficConditionTopic, MqttQos.atMostOnce);
+    client.subscribe(breakdownTopic, MqttQos.atMostOnce);
+
+
+    client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      final MqttPublishMessage recMess = c[0].payload;
+      final String pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      print('JSON Payload: ${json.decode(pt)}');
+      // TODO: Handle event
+    });
+
+  }
+
+  void onSubscribeFail(String topic){
+    print("Subscribe to $topic failed");
+  }
+
+  /// The subscribed callback
+  void onSubscribed(String topic) {
+    print('EXAMPLE::Subscription confirmed for topic $topic');
+  }
+
+  /// The unsolicited disconnect callback
+  void onDisconnected() {
+    print('Client disconnection');
+    if (client.connectionStatus.returnCode == MqttConnectReturnCode.solicited) {
+      print('OnDisconnected callback is solicited, this is correct');
+    }
+    exit(-1);
+  }
+
+  /// The successful connect callback
+  void onConnected() {
+    print('OnConnected client callback - Client connection was sucessful');
+  }
+
+  /// Pong callback
+  void pong() {
+    print('Ping response client callback invoked');
+  }
+
+
+  /* 
+    ------------------ API Request --------------------
+  */
+
 
   /*
     Update the situation of the agent
@@ -98,6 +201,10 @@ class _MyAppState extends State<MyApp>
     var response = await http.post(url, body: body, headers: headers);
     path = json.decode(response.body);
   }*/
+
+  /* 
+    ------------------  Callbacks --------------------
+  */
 
   void onMissionRequested() {
     print("BUTTON PRESSED");
