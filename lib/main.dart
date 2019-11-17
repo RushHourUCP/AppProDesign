@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp>
   static const String breakdownTopic =
       'team08/prod/environment/change/breakdown';
 
-  List<Position> _missionPositions;
+  List<Position> _remainingMissionCheckpoints;
 
   @override
   void initState() {
@@ -190,7 +190,7 @@ class _MyAppState extends State<MyApp>
             positions.add(Position(positionJson["x"], positionJson["y"]));
           }
 
-          setMissionPositions(positions);
+          setMissionCheckpoints(positions);
         }
         break;
 
@@ -329,7 +329,7 @@ class _MyAppState extends State<MyApp>
   */
 
   void onMissionStarted() {
-    goToNextMissionPosition();
+    goToNextMissionCheckpoint();
   }
 
   @override
@@ -420,14 +420,18 @@ class _MyAppState extends State<MyApp>
     });
   }
 
-  void setMissionPositions(List<Position> positions) {
-    _missionPositions = positions;
+  void setMissionCheckpoints(List<Position> positions) {
+    _remainingMissionCheckpoints = positions;
     // TODO update map UI
   }
 
-  void goToNextMissionPosition() {
-    var nextPosition = _missionPositions[0];
-    agentGoTo(commandWindow.getSelectedMode(), nextPosition.x, nextPosition.y);
+  void goToNextMissionCheckpoint() {
+    var nextPosition = _remainingMissionCheckpoints[0];
+    agentGoToPosition(commandWindow.getSelectedMode(), nextPosition);
+  }
+
+  void agentGoToPosition(String vehicle, Position position) {
+    agentGoTo(vehicle, position.x, position.y);
   }
 }
 
