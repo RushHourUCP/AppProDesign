@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:app_pro_design/commandWindow.dart';
@@ -97,7 +98,7 @@ class _MyAppState extends State<MyApp>
     const String lineStateTopic = 'team08/prod/environment/change/lines_state​';
     const String trafficConditionTopic = 'team08/prod/environment/change/traffic_conditions​';
     const String breakdownTopic = 'team08/prod/environment/change/breakdown';
-    /client.subscribe(situationTopic, MqttQos.atMostOnce);
+    client.subscribe(situationTopic, MqttQos.atMostOnce);
     client.subscribe(statusTopic, MqttQos.atMostOnce);
     client.subscribe(missionTopic, MqttQos.atMostOnce);
     client.subscribe(objectiveReachedTopic, MqttQos.atMostOnce);
