@@ -4,9 +4,9 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:app_pro_design/commandWindow.dart';
+import 'package:app_pro_design/components/SmartGlasses.dart';
 import 'package:app_pro_design/components/mapWindow.dart';
 import 'package:app_pro_design/components/modeButton.dart';
-import 'package:app_pro_design/components/SmartGlasses.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -47,21 +47,21 @@ class MyAppState extends State<MyApp>
   Offset get agentPos => _agentPos;
   var weather, air;
 
-  static const String situationTopic = 'team08/prod/user/situation';
-  static const String statusTopic = 'team08/prod/user/status';
-  static const String missionTopic = 'team08/prod/user/mission';
+  static const String situationTopic = 'project-65/prod/user/situation';
+  static const String statusTopic = 'project-65/prod/user/status';
+  static const String missionTopic = 'project-65/prod/user/mission';
   static const String objectiveReachedTopic =
-      'team08/prod/user/objective-reached';
-  static const String weatherTopic = 'team08/prod/context/change/weather';
-  static const String airTopic = 'team08/prod/context/change/air';
+      'project-65/prod/user/objective-reached';
+  static const String weatherTopic = 'project-65/prod/context/change/weather';
+  static const String airTopic = 'project-65/prod/context/change/air';
   static const String roadStatusTopic =
-      'team08/prod/environment/change/roads_status';
+      'project-65/prod/environment/change/roads_status';
   static const String linesChangeTopic =
-      'team08/prod/environement/change/lines_change';
+      'project-65/prod/environement/change/lines_change';
   static const String trafficConditionTopic =
-      'team08/prod/environement/change/traffic_conditions';
+      'project-65/prod/environment/change/traffic_conditions';
   static const String breakdownTopic =
-      'team08/prod/environment/change/breakdown';
+      'project-65/prod/environment/change/breakdown';
 
   List<Position> _remainingMissionCheckpoints;
 
@@ -95,7 +95,7 @@ class MyAppState extends State<MyApp>
     var jsonString;
 
     try {
-      await client.connect("team08", "di34zlpjto");
+      await client.connect("team-demo", "caramel");
     } on Exception catch (e) {
       print('client exception - $e');
       client.disconnect();
@@ -110,7 +110,7 @@ class MyAppState extends State<MyApp>
 
     builder.addString(jsonString);
     client.publishMessage(
-        "team08/prod/user/path", MqttQos.exactlyOnce, builder.payload);
+        "project-65/prod/user/path", MqttQos.exactlyOnce, builder.payload);
 
     client.disconnect();
   }
@@ -128,7 +128,7 @@ class MyAppState extends State<MyApp>
 
     /// try connecting to the broker
     try {
-      await client.connect("team08", "di34zlpjto");
+      await client.connect("team-demo", "caramel");
       //client.setProtocolV311();
       //client.logging(on: true);
     } on Exception catch (e) {
@@ -362,7 +362,7 @@ class MyAppState extends State<MyApp>
   Future<dynamic> fetchAgentSituation() async {
     var response = await http.get(
         Uri.encodeFull(
-            "agent-controller.team08.xp65.renault-digital.com/api/user/situation/last"),
+            "agent-controller.p65-dev.xp65.renault-digital.com/api/user/situation/last"),
         headers: {"Accept": "application/json"});
     agentSituation = json.decode(response.body);
     return agentSituation;
@@ -379,7 +379,7 @@ class MyAppState extends State<MyApp>
     };
     var body = json.encode(dict);
     String url =
-        "http://graph.team08.xp65.renault-digital.com//road_graph/shortest_path/$mode";
+        "http://graph.p65-dev.xp65.renault-digital.com//road_graph/shortest_path/$mode";
     Map headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
