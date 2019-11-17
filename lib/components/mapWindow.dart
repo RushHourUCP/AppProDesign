@@ -14,27 +14,47 @@ class MapWindow extends StatelessWidget {
 @override 
   Widget build(BuildContext context){
     
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.height*3.6;
+    //double height = MediaQuery.of(context).size.height/2;
+    double height = MediaQuery.of(context).size.height/2;
 
-    return Stack(
+
+
+
+    return 
+    Positioned(
+
+      height: height,
+      width: width,
+      top: -0,
+      left: -0,
+      child: Stack(
+      
       children: <Widget>[
-          prefix0.Map(),
+        Positioned(
+          child:  prefix0.Map(height),
+        ),
+         
         
         SizedBox(
           width: width,
           height: height,
+          
 
           child : CustomPaint(
-            painter: MyPainter(points, width, height),
+            painter: MyPainter(points,width,height),
             child: Container(
             ),
           )
         ),
-        AgentDisplay("subway", Offset(3,11), width, height),
+        AgentDisplay("subway", Offset(0,-6),width, height-30),
       
       ],
-    );
+    ),
+    
+    
+     
+    ); 
     
   }
 }

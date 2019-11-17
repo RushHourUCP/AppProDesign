@@ -19,9 +19,11 @@ class AgentDisplay extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     print('lib/asset/images/' + mobility + '.png');
+    print(width/22*point.dx);
     return Positioned(
-      left: width/6*point.dx - 15,
-      top: height/22*point.dy - 15,
+      left: point.dx*width/12 + width/2 +30,
+      //left: 12/width*-6 +12/width*point.dx,
+      top: height/6*point.dy + height/2 ,
       width: 30,
       height: 30,
       child: 

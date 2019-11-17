@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp>
   void initState() {
     super.initState();
 
-    stackedChildren.add(MapWindow([Offset(0, 0), Offset(3,0), Offset(3, 11), Offset(0, 11)]));
+    stackedChildren.add(MapWindow([Offset(0, 1), Offset(1,2), Offset(2, 2), Offset(2, 3), Offset(3, 3), Offset(3, 5)]));
 
     commandWindow.addMissionRequestListener(this);
     commandWindow.addOnSelectedModeChangedListener(this);

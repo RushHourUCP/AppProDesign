@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Map extends StatelessWidget{
-
-  const Map({Key key}) : super(key: key);
+  final double height;
+  const Map(this.height,{Key key}) : super(key: key);
 
   
 
@@ -10,9 +10,9 @@ class Map extends StatelessWidget{
   Widget build(BuildContext context){
     return Image.asset(
       'lib/asset/images/meaoocity.png',
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      fit:BoxFit.fill
+      height: height,
+      fit : BoxFit.fitHeight
+      
       );
   }
 }
