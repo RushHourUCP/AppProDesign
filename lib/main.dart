@@ -23,11 +23,11 @@ class MyApp extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: Subscribe to real events instead
     new Timer.periodic(
         Duration(seconds: 20),
             (Timer t) =>
-        {myAppState.displayNewNotification()});
+        // TODO: Subscribe to real events instead
+        {myAppState.displayRandomNotification()});
 
     return myAppState;
   }
@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp>
     ------------------  Agent Function --------------------
   */
 
-  void agentGoTo(String vehicle, double x, double y) async{
+  void agentGoTo(String vehicle, double x, double y) async {
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
 
     client.onConnected = onConnected;
@@ -197,7 +197,13 @@ class _MyAppState extends State<MyApp>
 
       case objectiveReachedTopic:
         {
-          //TODO
+          NotificationModel notification = new NotificationModel(
+              "Grongratulations",
+              DateTime.now(),
+              "You reached your final position!",
+              NotificationType.GOOD_NEWS,
+              100);
+          displayNotification(notification);
         }
         break;
 
@@ -215,25 +221,53 @@ class _MyAppState extends State<MyApp>
 
       case roadStatusTopic:
         {
-          //TODO
+          //TODO filter by current mode
+          NotificationModel notification = new NotificationModel(
+              "Road updates",
+              DateTime.now(),
+              "Some road access were updated, your itinirary might be updated soon...",
+              NotificationType.LOW_WARNING,
+              10);
+          displayNotification(notification);
         }
         break;
 
       case linesChangeTopic:
         {
-          //TODO
+          //TODO filter by current mode
+          NotificationModel notification = new NotificationModel(
+              "Subway line updates",
+              DateTime.now(),
+              "Some subway lines access were updated, your itinirary might be updated soon...",
+              NotificationType.LOW_WARNING,
+              10);
+          displayNotification(notification);
         }
         break;
 
       case trafficConditionTopic:
         {
-          //TODO
+          //TODO filter by current mode
+          NotificationModel notification = new NotificationModel(
+              "Traffic conditions updates",
+              DateTime.now(),
+              "The traffic condition has changed, your itinirary might be updated soon...",
+              NotificationType.LOW_WARNING,
+              10);
+          displayNotification(notification);
         }
         break;
 
       case breakdownTopic:
         {
-          //TODO
+          //TODO filter by current mode
+          NotificationModel notification = new NotificationModel(
+              "Taxi break down",
+              DateTime.now(),
+              "A taxi has broken down, your itinirary might be updated soon...",
+              NotificationType.LOW_WARNING,
+              10);
+          displayNotification(notification);
         }
         break;
 
@@ -360,40 +394,40 @@ class _MyAppState extends State<MyApp>
     });
   }
 
-  void displayNewNotification() {
-    print("Displaying new notification...");
-
-    //TODO: replace by real importance priorization
-    NotificationImportance importance =
-    Random().nextInt(10) == 0
-        ? NotificationImportance.HIGH
-        : NotificationImportance.LOW;
-
-    NotificationModel notification = NotificationModel(
-        "Notification type", DateTime.now(),
-        "Message that gives information about what happened.", importance);
-
+  void displayNotification(NotificationModel notification) {
+    print("Displaying notification...");
     NotificationWidget notificationWidget = NotificationWidget(notification);
+
+    notificationVibration(notification.importance);
 
     setState(() {
       stackedChildren.add(notificationWidget);
     });
 
-    // Vibrate if the notification is important
-    if (importance == NotificationImportance.HIGH) {
-      vibratePhone();
-      playSound(
-          "https://notificationsounds.com/wake-up-tones/system-fault-518/download/mp3",
-          3);
-    }
-
-    int duration = (importance == NotificationImportance.HIGH) ? 20 : 10;
+    // Hide notification after a while
     new Future.delayed(
-        Duration(seconds: duration),
+        Duration(seconds: notification.displayDuration),
             () =>
             setState(() {
               stackedChildren.remove(notificationWidget);
             }));
+  }
+
+  void displayRandomNotification() {
+    NotificationType importance = Random().nextInt(10) == 0
+        ? NotificationType.STRONG_WARNING
+        : NotificationType.LOW_WARNING;
+
+    int duration = (importance == NotificationType.STRONG_WARNING) ? 20 : 10;
+
+    NotificationModel notification = NotificationModel(
+        "Notification type",
+        DateTime.now(),
+        "Message that gives information about what happened.",
+        importance,
+        duration);
+
+    displayNotification(notification);
   }
 
   @override
@@ -450,6 +484,16 @@ class _MyAppState extends State<MyApp>
 
   void agentGoToPosition(String vehicle, Position position) {
     agentGoTo(vehicle, position.x, position.y);
+  }
+
+  void notificationVibration(NotificationType notificationType) {
+    // Vibrate if the notification is important
+    if (notificationType == NotificationType.STRONG_WARNING) {
+      vibratePhone();
+      playSound(
+          "https://notificationsounds.com/wake-up-tones/system-fault-518/download/mp3",
+          3);
+    }
   }
 }
 

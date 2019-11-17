@@ -7,6 +7,20 @@ class NotificationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color mColor;
+
+    switch (notificationModel.importance) {
+      case NotificationType.STRONG_WARNING:
+        mColor = Colors.deepOrangeAccent;
+        break;
+      case NotificationType.LOW_WARNING:
+        mColor = Colors.amberAccent;
+        break;
+      case NotificationType.GOOD_NEWS:
+        mColor = Colors.lightGreenAccent;
+        break;
+    }
+
     return Align(
         alignment: Alignment.topCenter,
         child: Container(
@@ -15,10 +29,7 @@ class NotificationWidget extends StatelessWidget {
             margin: EdgeInsets.only(top: 60.0),
             padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
             decoration: new BoxDecoration(
-              color: (notificationModel.importance ==
-                  NotificationImportance.HIGH) ?
-              Colors.deepOrangeAccent :
-              Colors.amberAccent,
+              color: mColor,
               borderRadius: BorderRadius.circular(25.0),
             ),
             child: Column(children: <Widget>[
@@ -29,9 +40,11 @@ class NotificationWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(top: 5.0),
                 child: Text(
-                  notificationModel.dateTime.hour.toString()
-                      + ":" + notificationModel.dateTime.minute.toString()
-                      + " - " + notificationModel.message,
+                  notificationModel.dateTime.hour.toString() +
+                      ":" +
+                      notificationModel.dateTime.minute.toString() +
+                      " - " +
+                      notificationModel.message,
                   style: TextStyle(
                     fontSize: 14.0,
                     fontWeight: FontWeight.w300,
@@ -46,12 +59,11 @@ class NotificationModel {
   final String id;
   final DateTime dateTime;
   final String message;
-  final NotificationImportance importance;
+  final NotificationType importance;
+  final int displayDuration;
 
-  NotificationModel(this.id, this.dateTime, this.message, this.importance);
+  NotificationModel(this.id, this.dateTime, this.message, this.importance,
+      this.displayDuration);
 }
 
-enum NotificationImportance {
-  HIGH,
-  LOW
-}
+enum NotificationType { STRONG_WARNING, LOW_WARNING, GOOD_NEWS }
