@@ -67,6 +67,34 @@ class _MyAppState extends State<MyApp>
   }
 
   /* 
+    ------------------  Agent Function --------------------
+  */
+
+  void agentGoTo(String vehicle, double x, double y) async{
+      client.onConnected = onConnected;
+    var message = {};
+    var target = {};
+    var jsonString;
+
+    try {
+      await client.connect("team08", "di34zlpjto");
+    } on Exception catch (e) {
+      print('client exception - $e');
+      client.disconnect();
+    }
+
+    message['vehicle_type'] = vehicle;
+    target['x'] = x;
+    target['y'] = y;
+    message['target'] = target;
+
+    jsonString = json.encode(message);
+    client.publishMessage("team08/prod/user/path", MqttQos.exactlyOnce, jsonString.payload);
+
+    client.disconnect();
+  }
+
+  /* 
     ------------------ Broker Suscription --------------------
   */
 

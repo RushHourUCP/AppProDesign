@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:mqtt_client/mqtt_client.dart';
 
 class Agent{
   var position;
   var objective;
-  var vehicle;
+  String vehicle;
   var path;
   bool isRunning = false;
   final MqttClient client = MqttClient('mr1dns3dpz5mjj.messaging.solace.cloud', '');
@@ -20,6 +22,10 @@ class Agent{
 
   Future<int> run() async{
     client.onConnected = onConnected;
+    var message = {};
+    var target = {};
+    var jsonString;
+
     try {
       await client.connect("team08", "di34zlpjto");
     } on Exception catch (e) {
@@ -27,16 +33,19 @@ class Agent{
       client.disconnect();
     }
 
-    while(isRunning){
-      // TODO: write payload
-      var message;
+    message['vehicle_type'] = this.vehicle;
+    target['x'] = this.objective['x'];
+    target['y'] = this.objective['y'];
+    message['target'] = target;
 
-      client.publishMessage("team08/prod/user/path", MqttQos.exactlyOnce, message.payload);
-    }
+    jsonString = json.encode(message);
+    client.publishMessage("team08/prod/user/path", MqttQos.exactlyOnce, jsonString.payload);
+
+    client.disconnect();
   }
 
   void stop(){
-    this.isRunning = false;
+    //TODO: Stop the agent
   }
 
   void onConnected(){
