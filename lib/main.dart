@@ -98,8 +98,15 @@ class _MyAppState extends State<MyApp>
     const String trafficConditionTopic = 'team08/prod/environment/change/traffic_conditions​';
     const String breakdownTopic = 'team08/prod/environment/change/breakdown';
     client.subscribe(situationTopic, MqttQos.atMostOnce);
-    client.subscribe(roadStatusTopic, MqttQos.atMostOnce);
+    client.subscribe(statusTopic, MqttQos.atMostOnce);
+    client.subscribe(objectiveReachedTopic, MqttQos.atMostOnce);
     client.subscribe(missionTopic, MqttQos.atMostOnce);
+    client.subscribe(weatherTopic, MqttQos.atMostOnce);
+    client.subscribe(airTopic, MqttQos.atMostOnce);
+    client.subscribe(roadStatusTopic, MqttQos.atMostOnce);
+    client.subscribe(lineStateTopic, MqttQos.atMostOnce);
+    client.subscribe(trafficConditionTopic, MqttQos.atMostOnce);
+    client.subscribe(breakdownTopic, MqttQos.atMostOnce);
 
 
     client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
