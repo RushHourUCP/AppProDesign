@@ -23,12 +23,6 @@ class MyApp extends StatefulWidget {
   final myAppState = MyAppState();
   @override
   State<StatefulWidget> createState() {
-    new Timer.periodic(
-        Duration(seconds: 20),
-            (Timer t) =>
-        // TODO: Subscribe to real events instead
-        {myAppState.displayRandomNotification()});
-
     return myAppState;
   }
 }
