@@ -87,8 +87,19 @@ class _MyAppState extends State<MyApp>
     }
 
     /// Connecting to topics
-    const String topic = 'team08/prod/user/situation'; // Not a wildcard topic
-    client.subscribe(topic, MqttQos.atMostOnce);
+    const String situationTopic = 'team08/prod/user/situation';
+    const String statusTopic = 'team08/prod/user/status';
+    const String missionTopic = 'team08/prod/user/mission';
+    const String objectiveReachedTopic = 'team08/prod/user/objective-reached';
+    const String weatherTopic = 'team08/prod/context/change/weather';
+    const String airTopic = 'team08/prod/context/change/air';
+    const String roadStatusTopic = 'team08/prod/environment/change/roads_status';
+    const String lineStateTopic = 'team08/prod/environment/change/lines_state​';
+    const String trafficConditionTopic = 'team08/prod/environment/change/traffic_conditions​';
+    const String breakdownTopic = 'team08/prod/environment/change/breakdown';
+    client.subscribe(situationTopic, MqttQos.atMostOnce);
+    client.subscribe(roadStatusTopic, MqttQos.atMostOnce);
+    client.subscribe(missionTopic, MqttQos.atMostOnce);
 
 
     client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
