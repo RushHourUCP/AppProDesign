@@ -41,6 +41,7 @@ class _MyAppState extends State<MyApp>
   MqttClient('mr1dns3dpz5mjj.messaging.solace.cloud', '');
   var path;
   var agentSituation;
+  var weather, air;
 
   static const String situationTopic = 'team08/prod/user/situation';
   static const String statusTopic = 'team08/prod/user/status';
@@ -72,7 +73,7 @@ class _MyAppState extends State<MyApp>
     stackedChildren.add(commandWindow);
 
     path = null;
-
+    //fetchAirWeather();
     listenMQTT();
   }
 
@@ -274,6 +275,20 @@ class _MyAppState extends State<MyApp>
   /* 
     ------------------ API Request --------------------
   */
+
+  /*Future<dynamic> fetchAirWeather() async{
+    var responseAir = await http.get(
+        Uri.encodeFull(
+            "context-controller.team08.xp65.renault-digital.com/api/context/air/current"),
+        headers: {"Accept": "application/json"});
+    var responseWeather = await http.get(
+        Uri.encodeFull(
+            "context-controller.team08.xp65.renault-digital.com/api/context/weather/current"),
+        headers: {"Accept": "application/json"});
+    air = json.decode(responseAir.body)['condition'];
+    weather = json.decode(responseWeather.body)['condition'];
+    return air;
+  }*/
 
   /*
     Update the situation of the agent
