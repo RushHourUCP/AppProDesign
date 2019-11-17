@@ -13,6 +13,7 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:vibration/vibration.dart';
 
 import 'components/EventWidget.dart';
+import 'models/Position.dart';
 
 void main() => runApp(MyApp());
 
@@ -36,26 +37,35 @@ class _MyAppState extends State<MyApp>
     with MissionRequestListener, SelectedModeChangedListener {
   List<Widget> stackedChildren = [];
   final CommandWindow commandWindow = CommandWindow();
-  final MqttClient client = MqttClient('mr1dns3dpz5mjj.messaging.solace.cloud', '');
+  final MqttClient client =
+  MqttClient('mr1dns3dpz5mjj.messaging.solace.cloud', '');
   var path;
   var agentSituation;
 
   static const String situationTopic = 'team08/prod/user/situation';
   static const String statusTopic = 'team08/prod/user/status';
   static const String missionTopic = 'team08/prod/user/mission';
-  static const String objectiveReachedTopic = 'team08/prod/user/objective-reached';
+  static const String objectiveReachedTopic =
+      'team08/prod/user/objective-reached';
   static const String weatherTopic = 'team08/prod/context/change/weather';
   static const String airTopic = 'team08/prod/context/change/air';
-  static const String roadStatusTopic = 'team08/prod/environment/change/roads_status';
-  static const String linesChangeTopic = 'team08/prod/environement/change/lines_change';
-  static const String trafficConditionTopic = 'team08/prod/environement/change/traffic_conditions';
-  static const String breakdownTopic = 'team08/prod/environment/change/breakdown';
+  static const String roadStatusTopic =
+      'team08/prod/environment/change/roads_status';
+  static const String linesChangeTopic =
+      'team08/prod/environement/change/lines_change';
+  static const String trafficConditionTopic =
+      'team08/prod/environement/change/traffic_conditions';
+  static const String breakdownTopic =
+      'team08/prod/environment/change/breakdown';
+
+  List<Position> _missionPositions;
 
   @override
   void initState() {
     super.initState();
 
-    stackedChildren.add(MapWindow([Offset(0, 0), Offset(3,0), Offset(3, 11), Offset(0, 11)]));
+    stackedChildren.add(
+        MapWindow([Offset(0, 0), Offset(3, 0), Offset(3, 11), Offset(0, 11)]));
 
     commandWindow.addMissionRequestListener(this);
     commandWindow.addOnSelectedModeChangedListener(this);
@@ -70,7 +80,7 @@ class _MyAppState extends State<MyApp>
     ------------------ Broker Suscription --------------------
   */
 
-  Future<int> listenMQTT() async{
+  Future<int> listenMQTT() async {
     client.onDisconnected = onDisconnected;
     client.onConnected = onConnected;
     client.onSubscribed = onSubscribed;
@@ -119,71 +129,81 @@ class _MyAppState extends State<MyApp>
 
   void handleMessage(MqttReceivedMessage<MqttMessage> message) {
     final MqttPublishMessage recMess = message.payload;
-    final String pt = MqttPublishPayload.bytesToStringAsString(
-        recMess.payload.message);
-    print('JSON Payload: ${json.decode(pt)}');
+
+    final String pt =
+    MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+    var decodedMessage = json.decode(pt);
+    print('JSON Payload: $decodedMessage');
     switch (message.topic) {
-      case situationTopic :
+      case situationTopic:
         {
           //TODO
         }
         break;
 
-      case statusTopic :
+      case statusTopic:
         {
           //TODO
         }
         break;
 
-      case missionTopic :
+      case missionTopic:
+        {
+          commandWindow.enableMissionLaunchButton(true);
+          var positionsJson = decodedMessage["positions"];
+
+          List<Position> positions = [];
+          for (var positionJson in positionsJson) {
+            positions.add(Position(positionJson["x"], positionJson["y"]));
+          }
+
+          setMissionPositions(positions);
+        }
+        break;
+
+      case objectiveReachedTopic:
         {
           //TODO
         }
         break;
 
-      case objectiveReachedTopic :
+      case weatherTopic:
         {
           //TODO
         }
         break;
 
-      case weatherTopic :
+      case airTopic:
         {
           //TODO
         }
         break;
 
-      case airTopic :
+      case roadStatusTopic:
         {
           //TODO
         }
         break;
 
-      case roadStatusTopic :
+      case linesChangeTopic:
         {
           //TODO
         }
         break;
 
-      case linesChangeTopic :
+      case trafficConditionTopic:
         {
           //TODO
         }
         break;
 
-      case trafficConditionTopic :
+      case breakdownTopic:
         {
           //TODO
         }
         break;
 
-      case breakdownTopic :
-        {
-          //TODO
-        }
-        break;
-
-      default :
+      default:
         {
           print("Unhandled message type");
         }
@@ -191,7 +211,7 @@ class _MyAppState extends State<MyApp>
     }
   }
 
-  void onSubscribeFail(String topic){
+  void onSubscribeFail(String topic) {
     print("Subscribe to $topic failed");
   }
 
@@ -219,11 +239,9 @@ class _MyAppState extends State<MyApp>
     print('Ping response client callback invoked');
   }
 
-
   /* 
     ------------------ API Request --------------------
   */
-
 
   /*
     Update the situation of the agent
@@ -369,6 +387,12 @@ class _MyAppState extends State<MyApp>
         });
       }
     });
+  }
+
+  void setMissionPositions(List<Position> positions) {
+    _missionPositions = positions;
+    // TODO pathFinding
+    // TODO update map UI
   }
 }
 
