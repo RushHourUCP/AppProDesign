@@ -178,7 +178,7 @@ class MyAppState extends State<MyApp>
         {
           Map<String, dynamic> positionJson = decodedMessage["position"];
           Position agentPosition = Position(
-              positionJson["x"], positionJson["y"]);
+              positionJson["x"].toDouble(), positionJson["y"].toDouble());
           Position nextCheckpoint = _remainingMissionCheckpoints[0];
           if (agentPosition.x == nextCheckpoint.x &&
               agentPosition.y == nextCheckpoint.y) {
