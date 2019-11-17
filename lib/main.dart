@@ -7,12 +7,9 @@ import 'package:app_pro_design/components/mapWindow.dart';
 import 'package:app_pro_design/components/modeButton.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:http/http.dart' as http;
 import 'package:vibration/vibration.dart';
-=======
 import 'package:mqtt_client/mqtt_client.dart';
->>>>>>> Connecting to MQTT Broker
 
 import 'components/EventWidget.dart';
 
@@ -26,13 +23,9 @@ class MyApp extends StatefulWidget {
   State<StatefulWidget> createState() {
     // TODO: Subscribe to real events instead
     new Timer.periodic(
-<<<<<<< HEAD
         Duration(seconds: 20),
             (Timer t) =>
         {myAppState.displayNewEvent(), myAppState.onMissionRequested()});
-=======
-        Duration(seconds: 20), (Timer t) => {myAppState.displayNewEvent()});
->>>>>>> Update topic subscribtion
 
     return myAppState;
   }
