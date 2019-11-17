@@ -26,9 +26,13 @@ class MyApp extends StatefulWidget {
   State<StatefulWidget> createState() {
     // TODO: Subscribe to real events instead
     new Timer.periodic(
+<<<<<<< HEAD
         Duration(seconds: 20),
             (Timer t) =>
         {myAppState.displayNewEvent(), myAppState.onMissionRequested()});
+=======
+        Duration(seconds: 20), (Timer t) => {myAppState.displayNewEvent()});
+>>>>>>> Update topic subscribtion
 
     return myAppState;
   }
@@ -66,22 +70,25 @@ class _MyAppState extends State<MyApp>
     client.onConnected = onConnected;
     client.onSubscribed = onSubscribed;
     client.pongCallback = pong;
+    client.onSubscribeFail = onSubscribeFail;
 
     /// try connecting to the broker
     try {
       await client.connect("team08", "di34zlpjto");
+      //client.setProtocolV311();
+      //client.logging(on: true);
     } on Exception catch (e) {
-      print('EXAMPLE::client exception - $e');
+      print('client exception - $e');
       client.disconnect();
     }
 
     /// Check we are connected
     if (client.connectionStatus.state == MqttConnectionState.connected) {
-      print('EXAMPLE::Mosquitto client connected');
+      print('Mosquitto client connected');
     } else {
       /// Use status here rather than state if you also want the broker return code.
       print(
-          'EXAMPLE::ERROR Mosquitto client connection failed - disconnecting, status is ${client.connectionStatus}');
+          'ERROR Mosquitto client connection failed - disconnecting, status is ${client.connectionStatus}');
       client.disconnect();
       exit(-1);
     }
@@ -97,25 +104,28 @@ class _MyAppState extends State<MyApp>
     const String lineStateTopic = 'team08/prod/environment/change/lines_state​';
     const String trafficConditionTopic = 'team08/prod/environment/change/traffic_conditions​';
     const String breakdownTopic = 'team08/prod/environment/change/breakdown';
-    client.subscribe(situationTopic, MqttQos.atMostOnce);
+    /client.subscribe(situationTopic, MqttQos.atMostOnce);
     client.subscribe(statusTopic, MqttQos.atMostOnce);
-    client.subscribe(objectiveReachedTopic, MqttQos.atMostOnce);
     client.subscribe(missionTopic, MqttQos.atMostOnce);
+    client.subscribe(objectiveReachedTopic, MqttQos.atMostOnce);
     client.subscribe(weatherTopic, MqttQos.atMostOnce);
     client.subscribe(airTopic, MqttQos.atMostOnce);
     client.subscribe(roadStatusTopic, MqttQos.atMostOnce);
-    client.subscribe(lineStateTopic, MqttQos.atMostOnce);
-    client.subscribe(trafficConditionTopic, MqttQos.atMostOnce);
+    //client.subscribe(lineStateTopic, MqttQos.atMostOnce);
+    //client.subscribe(trafficConditionTopic, MqttQos.atMostOnce);
     client.subscribe(breakdownTopic, MqttQos.atMostOnce);
 
 
     client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       final MqttPublishMessage recMess = c[0].payload;
       final String pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      print('EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
-      print('');
+      print('JSON Payload: ${json.decode(pt)}');
     });
 
+  }
+
+  void onSubscribeFail(String topic){
+    print("Subscribe to $topic failed");
   }
 
   /// The subscribed callback
@@ -125,22 +135,21 @@ class _MyAppState extends State<MyApp>
 
   /// The unsolicited disconnect callback
   void onDisconnected() {
-    print('EXAMPLE::OnDisconnected client callback - Client disconnection');
+    print('Client disconnection');
     if (client.connectionStatus.returnCode == MqttConnectReturnCode.solicited) {
-      print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
+      print('OnDisconnected callback is solicited, this is correct');
     }
     exit(-1);
   }
 
   /// The successful connect callback
   void onConnected() {
-    print(
-        'EXAMPLE::OnConnected client callback - Client connection was sucessful');
+    print('OnConnected client callback - Client connection was sucessful');
   }
 
   /// Pong callback
   void pong() {
-    print('EXAMPLE::Ping response client callback invoked');
+    print('Ping response client callback invoked');
   }
 
 
