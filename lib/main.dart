@@ -114,6 +114,7 @@ class _MyAppState extends State<MyApp>
       final MqttPublishMessage recMess = c[0].payload;
       final String pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
       print('JSON Payload: ${json.decode(pt)}');
+      // TODO: Handle event
     });
 
   }

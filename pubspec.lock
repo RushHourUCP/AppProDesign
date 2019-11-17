@@ -15,7 +15,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.3.0"
-<<<<<<< HEAD
   audioplayers:
     dependency: "direct main"
     description:
@@ -23,8 +22,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.13.2"
-=======
->>>>>>> Connecting to MQTT Broker
   boolean_selector:
     dependency: transitive
     description:
@@ -168,8 +165,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.7"
-<<<<<<< HEAD
-=======
   mqtt_client:
     dependency: "direct main"
     description:
@@ -177,7 +172,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.6.1"
->>>>>>> Connecting to MQTT Broker
   path:
     dependency: transitive
     description:
