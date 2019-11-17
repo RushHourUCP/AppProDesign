@@ -182,6 +182,7 @@ class MyAppState extends State<MyApp>
               agentPosition.y == nextCheckpoint.y) {
             print("Checkpoint reached!!!");
             _remainingMissionCheckpoints.removeAt(0); //TODO thread safety?
+            if (_remainingMissionCheckpoints.isEmpty) displayCongratulations();
             goToNextMissionCheckpoint();
           }
 
@@ -216,13 +217,7 @@ class MyAppState extends State<MyApp>
 
       case objectiveReachedTopic:
         {
-          NotificationModel notification = new NotificationModel(
-              "Congratulations",
-              DateTime.now(),
-              "You reached your final position!",
-              NotificationType.GOOD_NEWS,
-              100);
-          displayNotification(notification);
+          displayCongratulations();
         }
         break;
 
@@ -309,6 +304,16 @@ class MyAppState extends State<MyApp>
         }
         break;
     }
+  }
+
+  void displayCongratulations() {
+    NotificationModel notification = new NotificationModel(
+        "Congratulations",
+        DateTime.now(),
+        "You reached your final position!",
+        NotificationType.GOOD_NEWS,
+        100);
+    displayNotification(notification);
   }
 
   void onSubscribeFail(String topic) {
