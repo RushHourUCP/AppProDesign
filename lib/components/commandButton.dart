@@ -20,10 +20,12 @@ class CommandButton extends StatefulWidget {
 class CommandButtonState extends State<CommandButton> {
   VoidCallback callback;
   bool _isEnabled = false;
+  String _buttonText = "LOADING MISSION...";
 
   void setEnabled(bool boolean) {
     setState(() {
       _isEnabled = boolean;
+      _buttonText = "LAUNCH MISSION";
     });
   }
 
@@ -57,7 +59,7 @@ class CommandButtonState extends State<CommandButton> {
                     ),
                     padding: const EdgeInsets.only(
                         left: 55.0, right: 55.0, top: 20.0, bottom: 20.0),
-                    child: const Text('REQUEST MISSION',
+                    child: Text(_buttonText,
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w700)),
                   )),
