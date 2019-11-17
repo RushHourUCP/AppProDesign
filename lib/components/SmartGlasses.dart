@@ -14,7 +14,7 @@ class SmartGlasses {
    Guid directionCharacId = Guid("0d39d471-3692-4f21-b180-c2e53c841b88");
    Guid rangeCharacId = Guid("9acfe157-6faf-4284-8bce-6e393260371e");
 
-   void init() async {
+   void connect() async {
       flutterBlue.startScan(timeout: Duration(seconds: 4));
 
       // List<ScanResult> scanResults = await flutterBlue.scanResults.firstWhere((scanResults) {

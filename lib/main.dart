@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:app_pro_design/commandWindow.dart';
 import 'package:app_pro_design/components/mapWindow.dart';
 import 'package:app_pro_design/components/modeButton.dart';
+import 'package:app_pro_design/components/SmartGlasses.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -41,6 +42,7 @@ class MyAppState extends State<MyApp>
   var path;
   var agentSituation;
   Offset _agentPos = Offset(0,0);
+  SmartGlasses smartglasses = SmartGlasses();
 
   Offset get agentPos => _agentPos;
   var weather, air;
@@ -75,6 +77,7 @@ class MyAppState extends State<MyApp>
 
     path = null;
     //fetchAirWeather();
+    smartglasses.connect();
     listenMQTT();
   }
 
@@ -241,6 +244,10 @@ class MyAppState extends State<MyApp>
               NotificationType.LOW_WARNING,
               10);
           displayNotification(notification);
+          var decodedMessage = json.decode(pt);
+          int idroad = decodedMessage[0]["car"]["id"].split("_")[1];
+          if (decodedMessage[0]["car"]["state"] == "close")
+            smartglasses.sendEvent(1, idroad);
         }
         break;
 
@@ -280,6 +287,10 @@ class MyAppState extends State<MyApp>
               NotificationType.LOW_WARNING,
               10);
           displayNotification(notification);
+          var decodedMessage = json.decode(pt);
+          var idTaxi = int.parse(decodedMessage["vehicle"]);
+          smartglasses.sendEvent(2, idTaxi);
+
         }
         break;
 
@@ -423,6 +434,8 @@ class MyAppState extends State<MyApp>
             setState(() {
               stackedChildren.remove(notificationWidget);
             }));
+
+            
   }
 
   void displayRandomNotification() {
