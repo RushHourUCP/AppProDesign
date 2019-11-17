@@ -66,8 +66,6 @@ class _CommandWindowState extends State<CommandWindow> {
   }
 
   void onSelectedButtonChanged(ModeButtonModel modeButton) {
-    //TODO call enableMissionRequestButton when the mission is retrieved instead
-    enableMissionRequestButton();
     widget._notifySelectedModeChangedListeners(modeButton);
   }
 

@@ -28,7 +28,8 @@ class _ModeButtonListState extends State<ModeButtonList> {
   @override
   void initState() {
     super.initState();
-    for (int i = 0; i < 4; i++) {
+    buttons.add(new ModeButtonModel(transports[0], icons[0], true));
+    for (int i = 1; i < 4; i++) {
       buttons.add(new ModeButtonModel(transports[i], icons[i], false));
     }
   }
