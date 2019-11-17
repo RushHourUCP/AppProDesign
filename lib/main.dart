@@ -86,6 +86,7 @@ class MyAppState extends State<MyApp>
   */
 
   void agentGoTo(String vehicle, double x, double y) async {
+    print("Request to go to Position($x, $y) by $vehicle");
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
 
     client.onConnected = onConnected;
@@ -170,7 +171,7 @@ class MyAppState extends State<MyApp>
 
     final String pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-    var decodedMessage = json.decode(pt);
+    Map<String, dynamic> decodedMessage = json.decode(pt);
     print('New MQTT Message');
     print('---- Message topic: ${message.topic}');
     print('---- JSON Payload: $decodedMessage');
@@ -178,14 +179,22 @@ class MyAppState extends State<MyApp>
     switch (message.topic) {
       case situationTopic:
         {
-          print("Got a status topic message");
-          Map<String,dynamic> payload = json.decode(pt);
-          String vehicle = payload["vehicle_type"];
-          setState() {
-            _agentPos = Offset(payload["position"]["x"].toDouble(),
-            payload["position"]["y"].toDouble());
+          Map<String, dynamic> positionJson = decodedMessage["position"];
+          Position agentPosition = Position(
+              positionJson["x"].toDouble(), positionJson["y"].toDouble());
+          Position nextCheckpoint = _remainingMissionCheckpoints[0];
+          if (agentPosition.x == nextCheckpoint.x &&
+              agentPosition.y == nextCheckpoint.y) {
+            print("Checkpoint reached!!!");
+            _remainingMissionCheckpoints.removeAt(0); //TODO thread safety?
+            goToNextMissionCheckpoint();
           }
 
+          String vehicle = decodedMessage["vehicle_type"];
+          setState() {
+            _agentPos = Offset(decodedMessage["position"]["x"].toDouble(),
+                decodedMessage["position"]["y"].toDouble());
+          }
         }
         break;
 
