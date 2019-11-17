@@ -4,9 +4,9 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:app_pro_design/commandWindow.dart';
+import 'package:app_pro_design/components/SmartGlasses.dart';
 import 'package:app_pro_design/components/mapWindow.dart';
 import 'package:app_pro_design/components/modeButton.dart';
-import 'package:app_pro_design/components/SmartGlasses.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -56,10 +56,10 @@ class MyAppState extends State<MyApp>
   static const String airTopic = 'team08/prod/context/change/air';
   static const String roadStatusTopic =
       'team08/prod/environment/change/roads_status';
-  static const String linesChangeTopic =
-      'team08/prod/environement/change/lines_change';
+  static const String linesStateTopic =
+      'team08/prod/environment/change/lines_state';
   static const String trafficConditionTopic =
-      'team08/prod/environement/change/traffic_conditions';
+      'team08/prod/environment/change/traffic_conditions';
   static const String breakdownTopic =
       'team08/prod/environment/change/breakdown';
 
@@ -155,7 +155,7 @@ class MyAppState extends State<MyApp>
     client.subscribe(weatherTopic, MqttQos.atMostOnce);
     client.subscribe(airTopic, MqttQos.atMostOnce);
     client.subscribe(roadStatusTopic, MqttQos.atMostOnce);
-    client.subscribe(linesChangeTopic, MqttQos.atMostOnce);
+    client.subscribe(linesStateTopic, MqttQos.atMostOnce);
     client.subscribe(trafficConditionTopic, MqttQos.atMostOnce);
     client.subscribe(breakdownTopic, MqttQos.atMostOnce);
 
@@ -171,7 +171,7 @@ class MyAppState extends State<MyApp>
 
     final String pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-    Map<String, dynamic> decodedMessage = json.decode(pt);
+    var decodedMessage = json.decode(pt);
     print('New MQTT Message');
     print('---- Message topic: ${message.topic}');
     print('---- JSON Payload: $decodedMessage');
@@ -182,6 +182,7 @@ class MyAppState extends State<MyApp>
           Map<String, dynamic> positionJson = decodedMessage["position"];
           Position agentPosition = Position(
               positionJson["x"].toDouble(), positionJson["y"].toDouble());
+          if (_remainingMissionCheckpoints.isEmpty) return;
           Position nextCheckpoint = _remainingMissionCheckpoints[0];
           if (agentPosition.x == nextCheckpoint.x &&
               agentPosition.y == nextCheckpoint.y) {
@@ -253,14 +254,15 @@ class MyAppState extends State<MyApp>
               NotificationType.LOW_WARNING,
               10);
           displayNotification(notification);
-          var decodedMessage = json.decode(pt);
+          goToNextMissionCheckpoint();
+
           int idroad = decodedMessage[0]["car"]["id"].split("_")[1];
           if (decodedMessage[0]["car"]["state"] == "close")
             smartglasses.sendEvent(1, idroad);
         }
         break;
 
-      case linesChangeTopic:
+      case linesStateTopic:
         {
           //TODO filter by current mode
           NotificationModel notification = new NotificationModel(
@@ -270,6 +272,7 @@ class MyAppState extends State<MyApp>
               NotificationType.LOW_WARNING,
               10);
           displayNotification(notification);
+          goToNextMissionCheckpoint();
         }
         break;
 
@@ -283,6 +286,7 @@ class MyAppState extends State<MyApp>
               NotificationType.LOW_WARNING,
               10);
           displayNotification(notification);
+          goToNextMissionCheckpoint();
         }
         break;
 
@@ -296,6 +300,8 @@ class MyAppState extends State<MyApp>
               NotificationType.LOW_WARNING,
               10);
           displayNotification(notification);
+          goToNextMissionCheckpoint();
+
           var decodedMessage = json.decode(pt);
           var idTaxi = int.parse(decodedMessage["vehicle"]);
           smartglasses.sendEvent(2, idTaxi);
@@ -416,7 +422,7 @@ class MyAppState extends State<MyApp>
   @override
   void onSelectedModeChangedListener(ModeButtonModel modeButton) {
     print(modeButton.label + " was selected");
-    // TODO
+    goToNextMissionCheckpoint();
   }
 
   // NOTE: SHOULD NOT BE USED
@@ -512,6 +518,7 @@ class MyAppState extends State<MyApp>
   }
 
   void goToNextMissionCheckpoint() {
+    if (_remainingMissionCheckpoints.isEmpty) return;
     var nextPosition = _remainingMissionCheckpoints[0];
     agentGoToPosition(commandWindow.getSelectedMode(), nextPosition);
   }
