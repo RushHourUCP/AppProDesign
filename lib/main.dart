@@ -12,7 +12,8 @@ import 'package:http/http.dart' as http;
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:vibration/vibration.dart';
 
-import 'components/EventWidget.dart';
+import 'components/NotificationWidget.dart';
+import 'models/Position.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,37 +22,46 @@ class MyApp extends StatefulWidget {
   final myAppState = MyAppState();
   @override
   State<StatefulWidget> createState() {
-    // TODO: Subscribe to real events instead
     new Timer.periodic(
         Duration(seconds: 20),
             (Timer t) =>
-        {myAppState.displayNewEvent(), myAppState.onMissionRequested()});
+        // TODO: Subscribe to real events instead
+        {myAppState.displayRandomNotification()});
 
     return myAppState;
   }
 }
 
 class MyAppState extends State<MyApp>
-    with MissionRequestListener, SelectedModeChangedListener {
+    with MissionStartListener, SelectedModeChangedListener {
   List<Widget> stackedChildren = [];
   final CommandWindow commandWindow = CommandWindow();
-  final MqttClient client = MqttClient('mr1dns3dpz5mjj.messaging.solace.cloud', '');
+  final MqttClient client =
+  MqttClient('mr1dns3dpz5mjj.messaging.solace.cloud', '');
   var path;
   var agentSituation;
   Offset _agentPos = Offset(0,0);
 
   Offset get agentPos => _agentPos;
+  var weather, air;
 
   static const String situationTopic = 'team08/prod/user/situation';
   static const String statusTopic = 'team08/prod/user/status';
   static const String missionTopic = 'team08/prod/user/mission';
-  static const String objectiveReachedTopic = 'team08/prod/user/objective-reached';
+  static const String objectiveReachedTopic =
+      'team08/prod/user/objective-reached';
   static const String weatherTopic = 'team08/prod/context/change/weather';
   static const String airTopic = 'team08/prod/context/change/air';
-  static const String roadStatusTopic = 'team08/prod/environment/change/roads_status';
-  static const String linesChangeTopic = 'team08/prod/environement/change/lines_change';
-  static const String trafficConditionTopic = 'team08/prod/environement/change/traffic_conditions';
-  static const String breakdownTopic = 'team08/prod/environment/change/breakdown';
+  static const String roadStatusTopic =
+      'team08/prod/environment/change/roads_status';
+  static const String linesChangeTopic =
+      'team08/prod/environement/change/lines_change';
+  static const String trafficConditionTopic =
+      'team08/prod/environement/change/traffic_conditions';
+  static const String breakdownTopic =
+      'team08/prod/environment/change/breakdown';
+
+  List<Position> _remainingMissionCheckpoints;
 
   @override
   void initState() {
@@ -64,15 +74,48 @@ class MyAppState extends State<MyApp>
     stackedChildren.add(commandWindow);
 
     path = null;
-
+    //fetchAirWeather();
     listenMQTT();
+  }
+
+  /* 
+    ------------------  Agent Function --------------------
+  */
+
+  void agentGoTo(String vehicle, double x, double y) async {
+    final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
+
+    client.onConnected = onConnected;
+    var message = {};
+    var target = {};
+    var jsonString;
+
+    try {
+      await client.connect("team08", "di34zlpjto");
+    } on Exception catch (e) {
+      print('client exception - $e');
+      client.disconnect();
+    }
+
+    message['vehicle_type'] = vehicle;
+    target['x'] = x;
+    target['y'] = y;
+    message['target'] = target;
+
+    jsonString = json.encode(message);
+
+    builder.addString(jsonString);
+    client.publishMessage(
+        "team08/prod/user/path", MqttQos.exactlyOnce, builder.payload);
+
+    client.disconnect();
   }
 
   /* 
     ------------------ Broker Suscription --------------------
   */
 
-  Future<int> listenMQTT() async{
+  Future<int> listenMQTT() async {
     client.onDisconnected = onDisconnected;
     client.onConnected = onConnected;
     client.onSubscribed = onSubscribed;
@@ -126,7 +169,7 @@ class MyAppState extends State<MyApp>
     print("Got a ${message.topic} message");
     print('JSON Payload: ${json.decode(pt)}');
     switch (message.topic) {
-      case situationTopic :
+      case situationTopic:
         {
           print("Got a status topic message");
           Map<String,dynamic> payload = json.decode(pt);
@@ -139,61 +182,104 @@ class MyAppState extends State<MyApp>
         }
         break;
 
-      case statusTopic :
+      case statusTopic:
         {
           
         }
         break;
 
-      case missionTopic :
+      case missionTopic:
+        {
+          commandWindow.enableMissionLaunchButton(true);
+          var decodedMessage = json.decode(pt);
+          var positionsJson = decodedMessage["positions"];
+
+          List<Position> positions = [];
+          for (var positionJson in positionsJson) {
+            positions.add(Position(positionJson["x"], positionJson["y"]));
+          }
+
+          setMissionCheckpoints(positions);
+        }
+        break;
+
+      case objectiveReachedTopic:
+        {
+          NotificationModel notification = new NotificationModel(
+              "Congratulations",
+              DateTime.now(),
+              "You reached your final position!",
+              NotificationType.GOOD_NEWS,
+              100);
+          displayNotification(notification);
+        }
+        break;
+
+      case weatherTopic:
         {
           //TODO
         }
         break;
 
-      case objectiveReachedTopic :
+      case airTopic:
         {
           //TODO
         }
         break;
 
-      case weatherTopic :
+      case roadStatusTopic:
         {
-          //TODO
+          //TODO filter by current mode
+          NotificationModel notification = new NotificationModel(
+              "Road updates",
+              DateTime.now(),
+              "Some road access were updated, your itinirary might be updated soon...",
+              NotificationType.LOW_WARNING,
+              10);
+          displayNotification(notification);
         }
         break;
 
-      case airTopic :
+      case linesChangeTopic:
         {
-          //TODO
+          //TODO filter by current mode
+          NotificationModel notification = new NotificationModel(
+              "Subway line updates",
+              DateTime.now(),
+              "Some subway lines access were updated, your itinirary might be updated soon...",
+              NotificationType.LOW_WARNING,
+              10);
+          displayNotification(notification);
         }
         break;
 
-      case roadStatusTopic :
+      case trafficConditionTopic:
         {
-          //TODO
+          //TODO filter by current mode
+          NotificationModel notification = new NotificationModel(
+              "Traffic conditions updates",
+              DateTime.now(),
+              "The traffic condition has changed, your itinirary might be updated soon...",
+              NotificationType.LOW_WARNING,
+              10);
+          displayNotification(notification);
         }
         break;
 
-      case linesChangeTopic :
+      case breakdownTopic:
         {
-          //TODO
+          //TODO filter by current mode
+          NotificationModel notification = new NotificationModel(
+              "Taxi break down",
+              DateTime.now(),
+              "A taxi has broken down, your itinirary might be updated soon...",
+              NotificationType.LOW_WARNING,
+              10);
+          displayNotification(notification);
         }
         break;
 
-      case trafficConditionTopic :
-        {
-          //TODO
-        }
-        break;
-
-      case breakdownTopic :
-        {
-          //TODO
-        }
-        break;
-
-      default :
+      default:
         {
           print("Unhandled message type");
         }
@@ -201,7 +287,7 @@ class MyAppState extends State<MyApp>
     }
   }
 
-  void onSubscribeFail(String topic){
+  void onSubscribeFail(String topic) {
     print("Subscribe to $topic failed");
   }
 
@@ -216,7 +302,6 @@ class MyAppState extends State<MyApp>
     if (client.connectionStatus.returnCode == MqttConnectReturnCode.solicited) {
       print('OnDisconnected callback is solicited, this is correct');
     }
-    exit(-1);
   }
 
   /// The successful connect callback
@@ -229,11 +314,23 @@ class MyAppState extends State<MyApp>
     print('Ping response client callback invoked');
   }
 
-
   /* 
     ------------------ API Request --------------------
   */
 
+  /*Future<dynamic> fetchAirWeather() async{
+    var responseAir = await http.get(
+        Uri.encodeFull(
+            "context-controller.team08.xp65.renault-digital.com/api/context/air/current"),
+        headers: {"Accept": "application/json"});
+    var responseWeather = await http.get(
+        Uri.encodeFull(
+            "context-controller.team08.xp65.renault-digital.com/api/context/weather/current"),
+        headers: {"Accept": "application/json"});
+    air = json.decode(responseAir.body)['condition'];
+    weather = json.decode(responseWeather.body)['condition'];
+    return air;
+  }*/
 
   /*
     Update the situation of the agent
@@ -288,9 +385,8 @@ class MyAppState extends State<MyApp>
     ------------------  Callbacks --------------------
   */
 
-  void onMissionRequested() {
-    print("BUTTON PRESSED");
-    //TODO
+  void onMissionStarted() {
+    goToNextMissionCheckpoint();
   }
 
   @override
@@ -306,37 +402,40 @@ class MyAppState extends State<MyApp>
     });
   }
 
-  void displayNewEvent() {
-    print("Displaying new event...");
+  void displayNotification(NotificationModel notification) {
+    print("Displaying notification...");
+    NotificationWidget notificationWidget = NotificationWidget(notification);
 
-    //TODO: replace by real importance priorization
-    EventImportance importance =
-    Random().nextInt(10) == 0 ? EventImportance.HIGH : EventImportance.LOW;
-
-    EventModel event = EventModel("Event type", DateTime.now(),
-        "Message that gives information about what happened.", importance);
-
-    EventWidget eventWidget = EventWidget(event);
+    notificationVibration(notification.importance);
 
     setState(() {
-      stackedChildren.add(eventWidget);
+      stackedChildren.add(notificationWidget);
     });
 
-    // Vibrate if the event is important
-    if (importance == EventImportance.HIGH) {
-      vibratePhone();
-      playSound(
-          "https://notificationsounds.com/wake-up-tones/system-fault-518/download/mp3",
-          3);
-    }
-
-    int duration = (importance == EventImportance.HIGH) ? 20 : 10;
+    // Hide notification after a while
     new Future.delayed(
-        Duration(seconds: duration),
+        Duration(seconds: notification.displayDuration),
             () =>
             setState(() {
-              stackedChildren.remove(eventWidget);
+              stackedChildren.remove(notificationWidget);
             }));
+  }
+
+  void displayRandomNotification() {
+    NotificationType importance = Random().nextInt(10) == 0
+        ? NotificationType.STRONG_WARNING
+        : NotificationType.LOW_WARNING;
+
+    int duration = (importance == NotificationType.STRONG_WARNING) ? 20 : 10;
+
+    NotificationModel notification = NotificationModel(
+        "Notification type",
+        DateTime.now(),
+        "Message that gives information about what happened.",
+        importance,
+        duration);
+
+    displayNotification(notification);
   }
 
   @override
@@ -380,8 +479,32 @@ class MyAppState extends State<MyApp>
       }
     });
   }
+
+  void setMissionCheckpoints(List<Position> positions) {
+    _remainingMissionCheckpoints = positions;
+    // TODO update map UI
+  }
+
+  void goToNextMissionCheckpoint() {
+    var nextPosition = _remainingMissionCheckpoints[0];
+    agentGoToPosition(commandWindow.getSelectedMode(), nextPosition);
+  }
+
+  void agentGoToPosition(String vehicle, Position position) {
+    agentGoTo(vehicle, position.x, position.y);
+  }
+
+  void notificationVibration(NotificationType notificationType) {
+    // Vibrate if the notification is important
+    if (notificationType == NotificationType.STRONG_WARNING) {
+      vibratePhone();
+      playSound(
+          "https://notificationsounds.com/wake-up-tones/system-fault-518/download/mp3",
+          3);
+    }
+  }
 }
 
-abstract class MissionRequestListener {
-  void onMissionRequested();
+abstract class MissionStartListener {
+  void onMissionStarted();
 }

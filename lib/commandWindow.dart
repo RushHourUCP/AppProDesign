@@ -12,20 +12,28 @@ import 'package:flutter/widgets.dart';
 class CommandWindow extends StatefulWidget {
   CommandWindow({Key key}) : super(key: key);
 
-  @override
-  _CommandWindowState createState() => _CommandWindowState();
+  final _CommandWindowState _commandWindowState = _CommandWindowState();
 
-  final List<MissionRequestListener> _missionRequestListeners = [];
+  @override
+  _CommandWindowState createState() {
+    return _commandWindowState;
+  }
+
+  final List<MissionStartListener> _missionRequestListeners = [];
 
   final List<SelectedModeChangedListener> _selectedModeChangedListeners = [];
 
-  void addMissionRequestListener(MissionRequestListener listener) {
+  String getSelectedMode() {
+    return _commandWindowState.modeButtonList.getSelectedMode();
+  }
+
+  void addMissionRequestListener(MissionStartListener listener) {
     _missionRequestListeners.add(listener);
   }
 
-  void notifyMissionRequestListeners() {
-    for (MissionRequestListener listener in _missionRequestListeners) {
-      listener.onMissionRequested();
+  void _notifyMissionRequestListeners() {
+    for (MissionStartListener listener in _missionRequestListeners) {
+      listener.onMissionStarted();
     }
   }
 
@@ -33,10 +41,15 @@ class CommandWindow extends StatefulWidget {
     _selectedModeChangedListeners.add(listener);
   }
 
-  void notifySelectedModeChangedListeners(ModeButtonModel modeButton) {
-    for (SelectedModeChangedListener listener in _selectedModeChangedListeners) {
+  void _notifySelectedModeChangedListeners(ModeButtonModel modeButton) {
+    for (SelectedModeChangedListener listener
+    in _selectedModeChangedListeners) {
       listener.onSelectedModeChangedListener(modeButton);
     }
+  }
+
+  void enableMissionLaunchButton(bool boolean) {
+    _commandWindowState.missionStartButton.setEnabled(boolean);
   }
 }
 
@@ -47,25 +60,23 @@ abstract class SelectedModeChangedListener {
 class _CommandWindowState extends State<CommandWindow> {
   List<Widget> children = <Widget>[];
   ModeButtonList modeButtonList = ModeButtonList();
-  CommandButton missionRequestButton = CommandButton();
+  CommandButton missionStartButton = CommandButton();
 
   double height = 200.0;
 
   void onMissionRequestButtonClicked() {
-    widget.notifyMissionRequestListeners();
+    widget._notifyMissionRequestListeners();
     hideMissionRequestButton();
   }
 
   void onSelectedButtonChanged(ModeButtonModel modeButton) {
-    //TODO call enableMissionRequestButton when the mission is retrieved instead
-    enableMissionRequestButton();
-    widget.notifySelectedModeChangedListeners(modeButton);
+    widget._notifySelectedModeChangedListeners(modeButton);
   }
 
   void enableMissionRequestButton() {
     // If button displayed on screen
-    if (children.contains(missionRequestButton)) {
-      missionRequestButton.setEnabled(true);
+    if (children.contains(missionStartButton)) {
+      missionStartButton.setEnabled(true);
     }
   }
 
@@ -74,8 +85,8 @@ class _CommandWindowState extends State<CommandWindow> {
     super.initState();
     modeButtonList.setOnOneButtonEnabled(onSelectedButtonChanged);
     children.add(modeButtonList);
-    missionRequestButton.setOnButtonTaped(onMissionRequestButtonClicked);
-    children.add(missionRequestButton);
+    missionStartButton.setOnButtonTaped(onMissionRequestButtonClicked);
+    children.add(missionStartButton);
   }
 
   @override
@@ -97,9 +108,8 @@ class _CommandWindowState extends State<CommandWindow> {
 
   void hideMissionRequestButton() {
     setState(() {
-      children.remove(missionRequestButton);
+      children.remove(missionStartButton);
       height = 110.0;
     });
   }
-
 }
