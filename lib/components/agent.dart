@@ -5,6 +5,7 @@ class Agent{
   var objective;
   var vehicle;
   var path;
+  bool isRunning = false;
   final MqttClient client = MqttClient('mr1dns3dpz5mjj.messaging.solace.cloud', '');
 
   Agent(this.position, this.objective, this.vehicle, this.path);
@@ -26,9 +27,16 @@ class Agent{
       client.disconnect();
     }
 
-    // TODO: write payload
+    while(isRunning){
+      // TODO: write payload
+      var message;
 
-    client.publishMessage("team08/prod/user/path", MqttQos.exactlyOnce, builder.payload);
+      client.publishMessage("team08/prod/user/path", MqttQos.exactlyOnce, message.payload);
+    }
+  }
+
+  void stop(){
+    this.isRunning = false;
   }
 
   void onConnected(){
