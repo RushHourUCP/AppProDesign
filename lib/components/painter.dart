@@ -26,14 +26,9 @@ class MyPainter extends CustomPainter{
     for (var i = 1; i < points.length; i++) {
       
       canvas.drawLine(points[i-1], points[i], paint);
-      print(points[i].dx);print(points[i].dy);print("tesit");
       
     }
     
-    
-
-
-   
   }
 
   @override
